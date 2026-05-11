@@ -14,7 +14,7 @@ public class CharacterContorller : MonoBehaviour
 
     [Header("Movement")]
     public float moveSpeed = 5f;
-    public float sprintMultiplier = 1.8f;
+    public float sprintMultiplier = 1.5f;
 
     [Header("Smoothness")]
     public float acceleration = 10f;
@@ -84,7 +84,11 @@ public class CharacterContorller : MonoBehaviour
 
     private float xRotation = 0f;
     private bool isGrounded;
-    private bool isSprinting;
+    public bool isSprinting;
+
+    public Vector3 RevivePosition;
+
+
 
     void Awake()
     {
@@ -131,15 +135,72 @@ public class CharacterContorller : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
 
-        if (PlayerPrefs.HasKey("playerPos" + PlayerPrefs.GetInt("WorldIndex", 0)))
+        // LOAD
+
+        if (PlayerPrefs.HasKey("playerData" + PlayerPrefs.GetInt("WorldIndex", 0)))
         {
-            string value = PlayerPrefs.GetString("playerPos" + PlayerPrefs.GetInt("WorldIndex", 0));
+            string value = PlayerPrefs.GetString(
+                "playerData" + PlayerPrefs.GetInt("WorldIndex", 0)
+            );
+
             string[] split = value.Split('|');
 
-            Vector3 pos = new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));
+            Swim = bool.Parse(split[17]);
 
-            transform.position = pos;
+            capsule.height = float.Parse(split[19]);
+
+            transform.position = new Vector3(
+                float.Parse(split[0]),
+                float.Parse(split[1]),
+                float.Parse(split[2])
+            );
+
+            transform.eulerAngles = new Vector3(
+                float.Parse(split[3]),
+                float.Parse(split[4]),
+                float.Parse(split[5])
+            );
+
+            rb.linearVelocity = new Vector3(
+                float.Parse(split[6]),
+                float.Parse(split[7]),
+                float.Parse(split[8])
+            );
+
+            xRotation = float.Parse(split[9]);
+
+            currentSpeed = float.Parse(split[10]);
+
+            airVelocity = new Vector3(
+                float.Parse(split[11]),
+                float.Parse(split[12]),
+                float.Parse(split[13])
+            );
+
+            swimVelocity = new Vector3(
+                float.Parse(split[14]),
+                float.Parse(split[15]),
+                float.Parse(split[16])
+            );
+
+            Vector3 scale = transform.localScale;
+            scale.y = float.Parse(split[18]);
+            transform.localScale = scale;
+
+            cameraPivot.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         }
+
+
+        string value2 = PlayerPrefs.GetString("RevivePosition" + PlayerPrefs.GetInt("WorldIndex", 0), "0|0|0");
+        string[] split2 = value2.Split('|');
+
+        Vector3 pos2 = new Vector3(
+            float.Parse(split2[0]),
+            float.Parse(split2[1]),
+            float.Parse(split2[2])
+        );
+
+        RevivePosition = pos2;
     }
 
     void Update()
@@ -427,8 +488,32 @@ public class CharacterContorller : MonoBehaviour
     public void Save()
     {
         Vector3 pos = transform.position;
-        string value = pos.x + "|" + pos.y + "|" + pos.z;
+        Vector3 rot = transform.eulerAngles;
+        Vector3 vel = rb.linearVelocity;
 
-        PlayerPrefs.SetString("playerPos" + PlayerPrefs.GetInt("WorldIndex", 0), value);
+        string value =
+            pos.x + "|" + pos.y + "|" + pos.z + "|" +
+            rot.x + "|" + rot.y + "|" + rot.z + "|" +
+            vel.x + "|" + vel.y + "|" + vel.z + "|" +
+            xRotation + "|" +
+            currentSpeed + "|" +
+            airVelocity.x + "|" + airVelocity.y + "|" + airVelocity.z + "|" +
+            swimVelocity.x + "|" + swimVelocity.y + "|" + swimVelocity.z + "|" +
+            Swim + "|" +
+            transform.localScale.y + "|" +
+            capsule.height;
+
+        PlayerPrefs.SetString("playerData" + PlayerPrefs.GetInt("WorldIndex", 0), value);
+
+        string value2 = RevivePosition.x + "|" + RevivePosition.y + "|" + RevivePosition.z;
+        PlayerPrefs.SetString("RevivePosition" + PlayerPrefs.GetInt("WorldIndex", 0), value2);
+    }
+
+    public void Revive()
+    {
+        if(RevivePosition != new Vector3(0, 0, 0))
+            transform.position = RevivePosition;
+        else
+            transform.position = new Vector3(143, 26.5f, 210);
     }
 }

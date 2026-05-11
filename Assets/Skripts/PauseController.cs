@@ -5,7 +5,7 @@ using System.Collections;
 
 public class PauseController : MonoBehaviour
 {
-    public InputAction PauseAction;
+    private InputAction PauseAction;
     public Animator PauseAnimator;
     private bool IsActive;
     private float IsDelay;

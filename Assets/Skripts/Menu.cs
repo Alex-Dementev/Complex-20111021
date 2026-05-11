@@ -1,8 +1,18 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
 {
     public Animator BlackScreen;
+    public Text[] TimeTexts;
+    private float GameTimeSecond;
+    private float GameTimeHours;
+    private int WorldIndexDelete;
+
+    public Animator AnimatorDeletePanel;
+    public Text DeleteText;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void LoadWorld1()
     {
@@ -28,5 +38,61 @@ public class Menu : MonoBehaviour
     void Start()
     {
         Time.timeScale = 1;
+
+        GameTimeSecond = PlayerPrefs.GetFloat("AllTime0", 0);
+        GameTimeHours = (int)(GameTimeSecond / 3600);
+        TimeTexts[0].text = GameTimeHours + " ч  " + (int)((GameTimeSecond - (GameTimeHours * 3600)) / 60) + " мин";
+        GameTimeSecond = PlayerPrefs.GetFloat("AllTime1", 0);
+        GameTimeHours = (int)(GameTimeSecond / 3600);
+        TimeTexts[1].text = GameTimeHours + " ч  " + (int)((GameTimeSecond - (GameTimeHours * 3600)) / 60) + " мин";
+        GameTimeSecond = PlayerPrefs.GetFloat("AllTime2", 0);
+        GameTimeHours = (int)(GameTimeSecond / 3600);
+        TimeTexts[2].text = GameTimeHours + " ч  " + (int)((GameTimeSecond - (GameTimeHours * 3600)) / 60) + " мин";
+    }
+
+    public void DeleteWorld1()
+    {
+        WorldIndexDelete = 0;
+        DeleteText.text = "Удалить мир 1?";
+        AnimatorDeletePanel.CrossFade("Start", 0.2f);
+    }
+    public void DeleteWorld2()
+    {
+        WorldIndexDelete = 1;
+        DeleteText.text = "Удалить мир 2?";
+        AnimatorDeletePanel.CrossFade("Start", 0.2f);
+    }
+    public void DeleteWorld3()
+    {
+        WorldIndexDelete = 2;
+        DeleteText.text = "Удалить мир 3?";
+        AnimatorDeletePanel.CrossFade("Start", 0.2f);
+    }
+
+    public void DeleteWorldYes()
+    {
+        PlayerPrefs.DeleteKey("Oxygen" + WorldIndexDelete);
+        PlayerPrefs.DeleteKey("playerData" + WorldIndexDelete);
+        PlayerPrefs.DeleteKey("AllTime" + WorldIndexDelete);
+        PlayerPrefs.DeleteKey("Heals" + WorldIndexDelete);
+        PlayerPrefs.DeleteKey("RevivePosition" + WorldIndexDelete);
+        PlayerPrefs.DeleteKey("ResourcesID" + WorldIndexDelete);
+
+
+        GameTimeSecond = PlayerPrefs.GetFloat("AllTime0", 0);
+        GameTimeHours = (int)(GameTimeSecond / 3600);
+        TimeTexts[0].text = GameTimeHours + " ч  " + (int)((GameTimeSecond - (GameTimeHours * 3600)) / 60) + " мин";
+        GameTimeSecond = PlayerPrefs.GetFloat("AllTime1", 0);
+        GameTimeHours = (int)(GameTimeSecond / 3600);
+        TimeTexts[1].text = GameTimeHours + " ч  " + (int)((GameTimeSecond - (GameTimeHours * 3600)) / 60) + " мин";
+        GameTimeSecond = PlayerPrefs.GetFloat("AllTime2", 0);
+        GameTimeHours = (int)(GameTimeSecond / 3600);
+        TimeTexts[2].text = GameTimeHours + " ч  " + (int)((GameTimeSecond - (GameTimeHours * 3600)) / 60) + " мин";
+
+        AnimatorDeletePanel.CrossFade("End", 0.2f);
+    }
+    public void DeleteWorldNo()
+    {
+        AnimatorDeletePanel.CrossFade("End", 0.2f);
     }
 }
