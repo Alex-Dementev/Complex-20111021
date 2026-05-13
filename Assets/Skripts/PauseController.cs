@@ -7,17 +7,18 @@ public class PauseController : MonoBehaviour
 {
     private InputAction PauseAction;
     public Animator PauseAnimator;
-    private bool IsActive;
+    public bool IsActive;
     private float IsDelay;
     public GameObject PauseObject;
     public InputActionAsset inputActions;
-    private float Speed = 1f;
+    public float Speed = 1f;
     public Slider SliderSensitivity;
     private float MouseSensitivity;
     public Animator BlackScreen;
     public Image IdentificatorSave;
     public AllTimeInGame AllTimeInGame;
     private float TimeSave;
+    public Inventory Inventory;
 
     void Update()
     {
@@ -31,7 +32,11 @@ public class PauseController : MonoBehaviour
                 if(IsActive)
                 {
                     PauseAnimator.Play("Close");
-                    Speed = 1;
+
+                    if(!Inventory.IsActive)
+                        Speed = 1;
+                    Debug.Log(Inventory.IsActive);
+
                     IsActive = false;
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;
@@ -41,7 +46,9 @@ public class PauseController : MonoBehaviour
                     PauseObject.SetActive(true);
                     PauseAnimator.Play("Open");
                     IsActive = true;
+
                     Speed = 0;
+
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
                 }
@@ -81,7 +88,11 @@ public class PauseController : MonoBehaviour
         if(IsActive)
         {
             PauseAnimator.Play("Close");
-            Speed = 1;
+
+            if(!Inventory.IsActive)
+                Speed = 1;
+            Debug.Log(Inventory.IsActive);
+                
             IsActive = false;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

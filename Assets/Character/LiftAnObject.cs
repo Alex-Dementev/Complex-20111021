@@ -10,7 +10,10 @@ public class PickupDetector : MonoBehaviour
     public InputActionAsset inputActions;
     private InputAction LiftAction;
     private Objects Object;
+    public PauseController PauseController;
     public int[] ResourcesID = new int[500];
+    public Animator AnimatorNameObject;
+    private bool AnimatorController;
 
 
     public void LoadResourcesID()
@@ -41,7 +44,7 @@ public class PickupDetector : MonoBehaviour
         // 🔥 визуализация направления
         Debug.DrawRay(transform.position, transform.forward * distance, Color.green);
 
-        if(LiftAction.IsPressed() && Object != null)
+        if(LiftAction.IsPressed() && Object != null && !PauseController.IsActive)
         {
             ResourcesID[Object.ObjectID] = 1;
             Object.DestroyObject();
@@ -73,18 +76,34 @@ public class PickupDetector : MonoBehaviour
                 if (Object != null)
                 {
                     NameObject.text = "" + Object.Name;
+
+                    if(!AnimatorController)
+                    {
+                        AnimatorController = true;
+                        AnimatorNameObject.CrossFade("Start", 0.2f);
+                    }
                 }
             }
             else
             {
-                NameObject.text = "";
                 Object = null;
+
+                if(AnimatorController)
+                {
+                    AnimatorController = false;
+                    AnimatorNameObject.CrossFade("End", 0.2f);
+                }
             }
         }
         else
         {
-            NameObject.text = "";
             Object = null;
+
+            if(AnimatorController)
+            {
+                AnimatorController = false;
+                AnimatorNameObject.CrossFade("End", 0.2f);
+            }
         }
     }
 

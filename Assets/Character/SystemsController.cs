@@ -8,8 +8,10 @@ public class SystemsController : MonoBehaviour
     public Slider SliderHeals;
     private CapsuleCollider capsule;
     public Animator AnimatorZeroOxygen;
+    public Animator AnimatorZeroHeals;
     public Animator AnimatorBlackScreen;
     private bool ZeroOxygen;
+    private bool ZeroHeals;
     private bool Death;
     public int Heals = 100;
     public float MinusOxygen;
@@ -86,6 +88,17 @@ public class SystemsController : MonoBehaviour
                 MinusOxygen = 1.52f;
             else
                 MinusOxygen = 1f;
+        }
+
+        if(Heals <= 30 && !ZeroHeals)
+        {
+            AnimatorZeroHeals.CrossFade("Zero", 0.2f);
+            ZeroHeals = true;
+        }
+        else if (ZeroHeals && Heals >= 31)
+        {
+            AnimatorZeroHeals.CrossFade("Normal", 0.2f);
+            ZeroHeals = false;
         }
     }
 
