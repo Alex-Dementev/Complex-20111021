@@ -2,17 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
-public class Inventory : MonoBehaviour
+public class InventoryPanel : MonoBehaviour
 {
     public InputActionAsset inputActions;
     private InputAction InventoryAction;
     public GameObject InventoryObject;
     public Animator InventoryAnimator;
-    public Image[] ImageSlots;
-    private int[] IndexSlots;
-    private int CurrentSlotDetect;
-    public Text Descriptions;
-    public bool IsActive;
+    [HideInInspector]public bool IsActive;
     private float IsDelay;
     private float Speed;
     public PauseController PauseController;
@@ -35,21 +31,19 @@ public class Inventory : MonoBehaviour
         if(InventoryAction.IsPressed() && IsDelay <= 0)
         {
             Debug.Log("Инвентарь");
-            if(IsActive)
+            if(IsActive && !PauseController.IsActive)
             {
                 IsActive = false;
-                InventoryObject.SetActive(false);
+                InventoryAnimator.Play("Close");
+                PauseController.Speed = 1;
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-                
-                if(!PauseController.IsActive)
-                    PauseController.Speed = 1;
-                Debug.Log(PauseController.IsActive);
             }
-            else
+            else if(!PauseController.IsActive)
             {
                 IsActive = true;
                 InventoryObject.SetActive(true);
+                InventoryAnimator.Play("Open");
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
 

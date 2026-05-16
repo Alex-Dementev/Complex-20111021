@@ -11,50 +11,56 @@ public class PickupDetector : MonoBehaviour
     private InputAction LiftAction;
     private Objects Object;
     public PauseController PauseController;
-    public int[] ResourcesID = new int[500];
+    public InventoryPanel InventoryPanel;
     public Animator AnimatorNameObject;
+    public Animator AnimatorFullInventory;
     private bool AnimatorController;
+    public InventorySlots InventorySlots;
+    private int ObjectID;
+    private bool FullInventoryStart;
+    private bool FullInventoryEnd;
+    private float IsDelayFullInvetoryAnimator;
 
-
-    public void LoadResourcesID()
-    {
-        string data = PlayerPrefs.GetString("ResourcesID" + PlayerPrefs.GetInt("WorldIndex", 0), "");
-
-        if (string.IsNullOrEmpty(data))
-        {
-            ResourcesID = new int[500];
-            return;
-        }
-
-        string[] split = data.Split('|');
-
-        for (int i = 0; i < ResourcesID.Length; i++)
-        {
-            if (i < split.Length)
-                ResourcesID[i] = int.Parse(split[i]);
-            else
-                ResourcesID[i] = 0;
-        }
-    }
 
     void Update()
     {
+        IsDelayFullInvetoryAnimator -= Time.deltaTime;
+
+        if(IsDelayFullInvetoryAnimator <= 0 && FullInventoryEnd)
+        {
+            AnimatorFullInventory.CrossFade("End", 0.2f);
+            FullInventoryEnd = false;
+        }
+
         CheckObjects();
 
         // 🔥 визуализация направления
         Debug.DrawRay(transform.position, transform.forward * distance, Color.green);
 
-        if(LiftAction.IsPressed() && Object != null && !PauseController.IsActive)
+        if(LiftAction.IsPressed() && Object != null && !PauseController.IsActive && !InventoryPanel.IsActive)
         {
-            ResourcesID[Object.ObjectID] = 1;
-            Object.DestroyObject();
-        }
-    }
+            FullInventoryStart = true;
 
-    public void Save()
-    {
-        string data = string.Join("|", ResourcesID);
-        PlayerPrefs.SetString("ResourcesID" + PlayerPrefs.GetInt("WorldIndex", 0), data);
+            for(int i = 0; i < InventorySlots.TotalSlots; i++)
+            {
+                if(InventorySlots.IndexSlots[i] == 0 && Object != null)
+                {
+                    InventorySlots.IndexSlots[i] = ObjectID;
+                    Object.DestroyObject();
+                    Object = null;
+                    FullInventoryStart = false;
+                }
+            }
+
+            if(FullInventoryStart)
+            {
+                FullInventoryStart = false;
+                if(!FullInventoryEnd)
+                    AnimatorFullInventory.CrossFade("Start", 0.2f);
+                IsDelayFullInvetoryAnimator = 2;
+                FullInventoryEnd = true;
+            }
+        }
     }
 
     void CheckObjects()
@@ -76,6 +82,7 @@ public class PickupDetector : MonoBehaviour
                 if (Object != null)
                 {
                     NameObject.text = "" + Object.Name;
+                    ObjectID = Object.ID;
 
                     if(!AnimatorController)
                     {
@@ -128,8 +135,6 @@ public class PickupDetector : MonoBehaviour
 
     private void Start()
     {
-        LoadResourcesID();
-
         var playerMap = inputActions.FindActionMap("Player");
 
         LiftAction = playerMap.FindAction("Lift");

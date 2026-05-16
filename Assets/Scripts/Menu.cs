@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class Menu : MonoBehaviour
 {
@@ -76,7 +77,15 @@ public class Menu : MonoBehaviour
         PlayerPrefs.DeleteKey("AllTime" + WorldIndexDelete);
         PlayerPrefs.DeleteKey("Heals" + WorldIndexDelete);
         PlayerPrefs.DeleteKey("RevivePosition" + WorldIndexDelete);
-        PlayerPrefs.DeleteKey("ResourcesID" + WorldIndexDelete);
+        PlayerPrefs.DeleteKey("InventorySlots" + WorldIndexDelete);
+
+
+        // Получаем путь к файлу текущего мира (на основе PlayerPrefs "WorldIndex")
+        string fileName = $"World_{WorldIndexDelete}_Data.txt";
+        string path = Path.Combine(Application.persistentDataPath, fileName);
+        // Проверяем, есть ли такой файл, и сносим его
+        if (File.Exists(path))
+            File.Delete(path);
 
 
         GameTimeSecond = PlayerPrefs.GetFloat("AllTime0", 0);

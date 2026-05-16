@@ -7,18 +7,18 @@ public class PauseController : MonoBehaviour
 {
     private InputAction PauseAction;
     public Animator PauseAnimator;
-    public bool IsActive;
+    [HideInInspector]public bool IsActive;
     private float IsDelay;
     public GameObject PauseObject;
     public InputActionAsset inputActions;
-    public float Speed = 1f;
+    [HideInInspector]public float Speed = 1f;
     public Slider SliderSensitivity;
     private float MouseSensitivity;
     public Animator BlackScreen;
     public Image IdentificatorSave;
     public AllTimeInGame AllTimeInGame;
     private float TimeSave;
-    public Inventory Inventory;
+    public InventoryPanel InventoryPanel;
 
     void Update()
     {
@@ -31,15 +31,15 @@ public class PauseController : MonoBehaviour
             {
                 if(IsActive)
                 {
+                    IsActive = false;
                     PauseAnimator.Play("Close");
 
-                    if(!Inventory.IsActive)
+                    if(!InventoryPanel.IsActive)
+                    {
                         Speed = 1;
-                    Debug.Log(Inventory.IsActive);
-
-                    IsActive = false;
-                    Cursor.lockState = CursorLockMode.Locked;
-                    Cursor.visible = false;
+                        Cursor.lockState = CursorLockMode.Locked;
+                        Cursor.visible = false;
+                    }
                 }
                 else
                 {
@@ -57,7 +57,7 @@ public class PauseController : MonoBehaviour
             }
         }
 
-        Time.timeScale = Mathf.MoveTowards(Time.timeScale, Speed, Time.unscaledDeltaTime * 1.3f);
+        Time.timeScale = Mathf.MoveTowards(Time.timeScale, Speed, Time.unscaledDeltaTime * 1.7f);
 
 
         MouseSensitivity = SliderSensitivity.value;
@@ -89,9 +89,9 @@ public class PauseController : MonoBehaviour
         {
             PauseAnimator.Play("Close");
 
-            if(!Inventory.IsActive)
+            if(!InventoryPanel.IsActive)
                 Speed = 1;
-            Debug.Log(Inventory.IsActive);
+            Debug.Log(InventoryPanel.IsActive);
                 
             IsActive = false;
             Cursor.lockState = CursorLockMode.Locked;
