@@ -52,9 +52,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Lift",
+                    "name": "ЛКМ",
                     "type": "Button",
                     "id": "9095ce42-9d2c-45d2-886b-81f7e8b798a3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ПКМ",
+                    "type": "Button",
+                    "id": "e124bebd-dbb4-48b0-9f3d-0bb0794f291e",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -64,6 +73,24 @@
                     "name": "Inventory",
                     "type": "Button",
                     "id": "db59a809-e308-4429-94a8-2a4a8ecda67f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ThrowOut",
+                    "type": "Button",
+                    "id": "7e2c5a35-3f85-4f8d-8af1-c7c681f27f45",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Spawn",
+                    "type": "Button",
+                    "id": "b2db1bfb-eaf7-4431-801f-7496e1fa39a6",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -177,7 +204,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Lift",
+                    "action": "ЛКМ",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a2b7430e-f9e1-407e-86e9-f03da9302450",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ПКМ",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -189,6 +227,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Inventory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "be2d4b42-d4c5-4c69-a9d3-463046b52db0",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ThrowOut",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "028e0173-367f-46f6-96ff-db50967a8142",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Spawn",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

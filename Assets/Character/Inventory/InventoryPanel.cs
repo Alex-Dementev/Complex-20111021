@@ -12,6 +12,8 @@ public class InventoryPanel : MonoBehaviour
     private float IsDelay;
     private float Speed;
     public PauseController PauseController;
+    public GameObject Closet;
+    public InventorySlots InventorySlots;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -28,22 +30,50 @@ public class InventoryPanel : MonoBehaviour
     {
         IsDelay -= Time.unscaledDeltaTime;
 
-        if(InventoryAction.IsPressed() && IsDelay <= 0)
+        if(InventoryAction.triggered && IsDelay <= 0)
         {
-            Debug.Log("Инвентарь");
             if(IsActive && !PauseController.IsActive)
             {
                 IsActive = false;
-                InventoryAnimator.Play("Close");
+
+                if(Closet.activeSelf)
+                    InventoryAnimator.Play("CloseCloset");
+                else
+                    InventoryAnimator.Play("Close");
+
+                InventorySlots.Closet = null;
+                InventorySlots.UpdateCloset();
                 PauseController.Speed = 1;
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
             else if(!PauseController.IsActive)
             {
+                Closet.SetActive(false);
                 IsActive = true;
                 InventoryObject.SetActive(true);
                 InventoryAnimator.Play("Open");
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+
+                PauseController.Speed = 0;
+            }
+
+            IsDelay = 0.5f;
+        }
+    }
+
+    public void OpenCloset()
+    {
+        if(IsDelay <= 0)
+        {
+            Closet.SetActive(true);
+
+            if(!PauseController.IsActive)
+            {
+                IsActive = true;
+                InventoryObject.SetActive(true);
+                InventoryAnimator.Play("OpenCloset");
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
 

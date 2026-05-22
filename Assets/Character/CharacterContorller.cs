@@ -228,14 +228,14 @@ public class CharacterContorller : MonoBehaviour
         {
             Swim = true;
             SwimFogFS.SetActive(true);
-            RenderSettings.fogDensity = 0.115f;
+            RenderSettings.fogDensity = 0.085f;
             RenderSettings.fogColor = new Color(12f/255, 31f/255, 37f/255);
         }
         else if (!inWater)
         {
             Swim = false;
             SwimFogFS.SetActive(false);
-            RenderSettings.fogDensity = 0.077f;
+            RenderSettings.fogDensity = 0.060f;
             RenderSettings.fogColor = new Color(0f/255, 0f/255, 0f/255);
         }
     }

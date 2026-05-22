@@ -2,14 +2,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
-public class PickupDetector : MonoBehaviour
+public class LiftAnObject : MonoBehaviour
 {
     private float distance = 6f;
     private float radius = 0.05f;
     public Text NameObject;
     public InputActionAsset inputActions;
     private InputAction LiftAction;
+    private InputAction DestroyAction;
     private Objects Object;
+    private Closet Closet;
     public PauseController PauseController;
     public InventoryPanel InventoryPanel;
     public Animator AnimatorNameObject;
@@ -20,6 +22,7 @@ public class PickupDetector : MonoBehaviour
     private bool FullInventoryStart;
     private bool FullInventoryEnd;
     private float IsDelayFullInvetoryAnimator;
+    public Text TrableText;
 
 
     void Update()
@@ -37,7 +40,7 @@ public class PickupDetector : MonoBehaviour
         // 🔥 визуализация направления
         Debug.DrawRay(transform.position, transform.forward * distance, Color.green);
 
-        if(LiftAction.IsPressed() && Object != null && !PauseController.IsActive && !InventoryPanel.IsActive)
+        if(LiftAction.triggered && Object != null && Closet == null && !PauseController.IsActive && !InventoryPanel.IsActive)
         {
             FullInventoryStart = true;
 
@@ -49,17 +52,45 @@ public class PickupDetector : MonoBehaviour
                     Object.DestroyObject();
                     Object = null;
                     FullInventoryStart = false;
+                    break;
                 }
             }
 
             if(FullInventoryStart)
             {
+                TrableText.text = "Инвентарь полон";
                 FullInventoryStart = false;
                 if(!FullInventoryEnd)
                     AnimatorFullInventory.CrossFade("Start", 0.2f);
                 IsDelayFullInvetoryAnimator = 2;
                 FullInventoryEnd = true;
             }
+        }
+        
+        if(LiftAction.triggered && Closet != null && Object == null && !PauseController.IsActive && !InventoryPanel.IsActive)
+        {
+            InventoryPanel.OpenCloset();
+            InventorySlots.Closet = Closet;
+            InventorySlots.UpdateCloset();
+            Closet = null;
+        }
+        if(DestroyAction.triggered && Closet != null && Object == null && !PauseController.IsActive && !InventoryPanel.IsActive)
+        {
+            for(int i = 0; i < Closet.Slots.Length; i++)
+            {
+                if(Closet.Slots[i] != 0)
+                {
+                    TrableText.text = "Нельзя";
+                    if(!FullInventoryEnd)
+                        AnimatorFullInventory.CrossFade("Start", 0.2f);
+                    IsDelayFullInvetoryAnimator = 2;
+                    FullInventoryEnd = true;
+                    return;
+                }
+            }
+
+            Closet.DestroyCloset();
+            Closet = null;
         }
     }
 
@@ -91,9 +122,45 @@ public class PickupDetector : MonoBehaviour
                     }
                 }
             }
-            else
+            else if(!hit.collider.CompareTag("Closet"))
             {
                 Object = null;
+
+                if(AnimatorController)
+                {
+                    AnimatorController = false;
+                    AnimatorNameObject.CrossFade("End", 0.2f);
+                }
+            }
+
+            if (hit.collider.CompareTag("Closet"))
+            {
+                Closet = hit.collider.GetComponent<Closet>();
+
+                if (Closet != null)
+                {
+                    NameObject.text = "Шкаф"; // + Closet.Name
+
+                    if(!AnimatorController)
+                    {
+                        AnimatorController = true;
+                        AnimatorNameObject.CrossFade("Start", 0.2f);
+                    }
+                }
+            }
+            else if(!hit.collider.CompareTag("Object"))
+            {
+                if(AnimatorController)
+                {
+                    AnimatorController = false;
+                    AnimatorNameObject.CrossFade("End", 0.2f);
+                }
+            }
+
+            if(!hit.collider.CompareTag("Closet") && !hit.collider.CompareTag("Object"))
+            {
+                Object = null;
+                Closet = null;
 
                 if(AnimatorController)
                 {
@@ -105,6 +172,7 @@ public class PickupDetector : MonoBehaviour
         else
         {
             Object = null;
+            Closet = null;
 
             if(AnimatorController)
             {
@@ -137,8 +205,10 @@ public class PickupDetector : MonoBehaviour
     {
         var playerMap = inputActions.FindActionMap("Player");
 
-        LiftAction = playerMap.FindAction("Lift");
+        LiftAction = playerMap.FindAction("ЛКМ");
+        DestroyAction = playerMap.FindAction("ПКМ");
 
         LiftAction.Enable();
+        DestroyAction.Enable();
     }
 }

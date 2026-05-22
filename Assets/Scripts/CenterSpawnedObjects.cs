@@ -5,9 +5,12 @@ using System.Globalization;
 
 public class CenterSpawnedObjects : MonoBehaviour
 {
-    [HideInInspector]public int[] ResourcesID = new int[6000];
-    [HideInInspector]public Vector3[] ResourcesPositions = new Vector3[6000];
-    [HideInInspector]public int[] ResourcesTypes = new int[6000];
+    public int[] ResourcesID = new int[14000];
+    public Vector3[] ResourcesPositions = new Vector3[14000];
+    public Vector3[] ResourcesRotations = new Vector3[14000]; // Новый массив на 14000 для углов Эйлера (X, Y, Z)
+    public int[] ResourcesTypes = new int[14000];
+    public int[][] ResourcesItems = new int[2000][];
+    public string[] ResourcesNames = new string[2000];
 
     void Start()
     {
@@ -17,10 +20,7 @@ public class CenterSpawnedObjects : MonoBehaviour
     private string GetSavePath()
     {
         int worldIndex = PlayerPrefs.GetInt("WorldIndex", 0);
-        
         string fileName = $"World_{worldIndex}_Data.txt";
-        
-        // Application.persistentDataPath на ПК ведет в AppData/LocalLow/НазваниеКомпании/НазваниеИгры
         return Path.Combine(Application.persistentDataPath, fileName);
     }
 
@@ -31,27 +31,59 @@ public class CenterSpawnedObjects : MonoBehaviour
         
         StringBuilder sb = new StringBuilder();
 
-        //Собираем данные в строку
-        sb.AppendLine(string.Join("|", ResourcesID));
-        sb.AppendLine(string.Join("|", ResourcesTypes));
+        // 1. Сохраняем IDs (Строка 0)
+        sb.Append(string.Join("|", ResourcesID)).Append('\n');
+        
+        // 2. Сохраняем Types (Строка 1)
+        sb.Append(string.Join("|", ResourcesTypes)).Append('\n');
 
+        // 3. Сохраняем Позиции (Строка 2)
         for (int i = 0; i < ResourcesPositions.Length; i++)
         {
             Vector3 pos = ResourcesPositions[i];
-            string x = pos.x.ToString(CultureInfo.InvariantCulture);
-            string y = pos.y.ToString(CultureInfo.InvariantCulture);
-            string z = pos.z.ToString(CultureInfo.InvariantCulture);
-
-            sb.Append(x).Append(';').Append(y).Append(';').Append(z);
+            sb.Append(pos.x.ToString(CultureInfo.InvariantCulture)).Append(';')
+              .Append(pos.y.ToString(CultureInfo.InvariantCulture)).Append(';')
+              .Append(pos.z.ToString(CultureInfo.InvariantCulture));
             if (i < ResourcesPositions.Length - 1) sb.Append("|");
+        }
+        sb.Append('\n'); 
+
+        // 4. Сохраняем Предметы (Строка 3)
+        for (int i = 0; i < ResourcesItems.Length; i++)
+        {
+            if (ResourcesItems[i] != null && ResourcesItems[i].Length > 0)
+            {
+                sb.Append(string.Join(" ", ResourcesItems[i]));
+            }
+            if (i < ResourcesItems.Length - 1) sb.Append("|");
+        }
+        sb.Append('\n'); 
+
+        // 5. Сохраняем Названия (Строка 4)
+        for (int i = 0; i < ResourcesNames.Length; i++)
+        {
+            string name = ResourcesNames[i] ?? "";
+            if (name.Contains("|")) name = name.Replace("|", ""); 
+
+            sb.Append(name);
+            if (i < ResourcesNames.Length - 1) sb.Append("|");
+        }
+        sb.Append('\n'); 
+
+        // 6. Сохраняем Ротации (Строка 5)
+        for (int i = 0; i < ResourcesRotations.Length; i++)
+        {
+            Vector3 rot = ResourcesRotations[i];
+            sb.Append(rot.x.ToString(CultureInfo.InvariantCulture)).Append(';')
+              .Append(rot.y.ToString(CultureInfo.InvariantCulture)).Append(';')
+              .Append(rot.z.ToString(CultureInfo.InvariantCulture));
+            if (i < ResourcesRotations.Length - 1) sb.Append("|");
         }
 
         try
         {
-            //записываем временный файл
             File.WriteAllText(tempPath, sb.ToString());
 
-            // Если старый сейв уже существовал, перезаписываем временным
             if (File.Exists(mainPath))
             {
                 File.Replace(tempPath, mainPath, null);
@@ -60,13 +92,9 @@ public class CenterSpawnedObjects : MonoBehaviour
             {
                 File.Move(tempPath, mainPath);
             }
-
-            Debug.Log($"[SaveSystem] Атомное сохранение успешно завершено: {mainPath}");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"[SaveSystem] Критическая ошибка при атомном сохранении: {e.Message}");
-            
             if (File.Exists(tempPath)) File.Delete(tempPath);
         }
     }
@@ -77,46 +105,44 @@ public class CenterSpawnedObjects : MonoBehaviour
 
         if (!File.Exists(path))
         {
-            ResourcesID = new int[6000];
-            ResourcesTypes = new int[6000];
-            ResourcesPositions = new Vector3[6000];
-            Debug.LogWarning($"[SaveSystem] Файл сохранения {path} не найден. Созданы пустые массивы.");
-            return;
+            ResourcesID = new int[14000];
+            ResourcesTypes = new int[14000];
+            ResourcesPositions = new Vector3[14000];
+            ResourcesRotations = new Vector3[14000]; 
+            ResourcesItems = new int[2000][];
+            ResourcesNames = new string[2000];
+            Debug.Log("CSO: Новые массивы (нет файла сохранений)");
+            return; 
         }
 
         string[] lines = File.ReadAllLines(path);
         
-        if (lines.Length < 3)
+        if (lines.Length < 6) 
         {
-            Debug.LogError("[SaveSystem] Файл сохранения поврежден! Недостаточно строк данных.");
             return;
         }
 
+        // --- 1. Парсинг IDs ---
         string[] idSplit = lines[0].Split('|');
         for (int i = 0; i < ResourcesID.Length; i++)
         {
-            if (i < idSplit.Length && !string.IsNullOrEmpty(idSplit[i]))
-                ResourcesID[i] = int.Parse(idSplit[i]);
-            else
-                ResourcesID[i] = 0;
+            ResourcesID[i] = (i < idSplit.Length && !string.IsNullOrEmpty(idSplit[i])) ? int.Parse(idSplit[i]) : 0;
         }
 
+        // --- 2. Парсинг Types ---
         string[] typeSplit = lines[1].Split('|');
         for (int i = 0; i < ResourcesTypes.Length; i++)
         {
-            if (i < typeSplit.Length && !string.IsNullOrEmpty(typeSplit[i]))
-                ResourcesTypes[i] = int.Parse(typeSplit[i]);
-            else
-                ResourcesTypes[i] = 0;
+            ResourcesTypes[i] = (i < typeSplit.Length && !string.IsNullOrEmpty(typeSplit[i])) ? int.Parse(typeSplit[i]) : 0;
         }
         
+        // --- 3. Парсинг Позиций ---
         string[] posSplit = lines[2].Split('|');
         for (int i = 0; i < ResourcesPositions.Length; i++)
         {
             if (i < posSplit.Length && !string.IsNullOrEmpty(posSplit[i]))
             {
                 string[] xyz = posSplit[i].Split(';');
-
                 if (xyz.Length >= 3)
                 {
                     ResourcesPositions[i] = new Vector3(
@@ -125,17 +151,74 @@ public class CenterSpawnedObjects : MonoBehaviour
                         float.Parse(xyz[2], CultureInfo.InvariantCulture)
                     );
                 }
-                else
+                else ResourcesPositions[i] = Vector3.zero;
+            }
+            else ResourcesPositions[i] = Vector3.zero;
+        }
+
+        // --- 4. Парсинг Предметов ---
+        string[] itemsSplit = lines[3].Split('|');
+        ResourcesItems = new int[2000][];
+
+        for (int i = 0; i < ResourcesItems.Length; i++)
+        {
+            // Если в файле есть данные для этого индекса и они не пустые
+            if (i < itemsSplit.Length && !string.IsNullOrWhiteSpace(itemsSplit[i]))
+            {
+                string trimmedLine = itemsSplit[i].Trim();
+                
+                if (string.IsNullOrEmpty(trimmedLine))
                 {
-                    ResourcesPositions[i] = Vector3.zero;
+                    // Нам похуй какой тип шкафа, если в сейве пусто, 
+                    // просто даем ему временный пустой массив, Closet сам его расширит под себя!
+                    ResourcesItems[i] = null; 
+                    continue;
+                }
+
+                string[] singleContainerItems = trimmedLine.Split(' ');
+                ResourcesItems[i] = new int[singleContainerItems.Length];
+
+                for (int j = 0; j < singleContainerItems.Length; j++)
+                {
+                    ResourcesItems[i][j] = int.Parse(singleContainerItems[j]);
                 }
             }
             else
             {
-                ResourcesPositions[i] = Vector3.zero;
+                ResourcesItems[i] = new int[0];
             }
         }
 
-        Debug.Log(ResourcesID[10]);
+        // --- 5. Парсинг Названий ---
+        string[] namesSplit = lines[4].Split('|');
+        ResourcesNames = new string[2000]; 
+
+        for (int i = 0; i < ResourcesNames.Length; i++)
+        {
+            ResourcesNames[i] = (i < namesSplit.Length) ? namesSplit[i] : "";
+        }
+        // --- 6. Парсинг Ротаций ---
+        string[] rotSplit = lines[5].Split('|');
+        ResourcesRotations = new Vector3[14000];
+        for (int i = 0; i < ResourcesRotations.Length; i++)
+        {
+            if (i < rotSplit.Length && !string.IsNullOrEmpty(rotSplit[i]))
+            {
+                string[] xyz = rotSplit[i].Split(';');
+                if (xyz.Length >= 3)
+                {
+                    ResourcesRotations[i] = new Vector3(
+                        float.Parse(xyz[0], CultureInfo.InvariantCulture),
+                        float.Parse(xyz[1], CultureInfo.InvariantCulture),
+                        float.Parse(xyz[2], CultureInfo.InvariantCulture)
+                    );
+                }
+                else ResourcesRotations[i] = Vector3.zero;
+            }
+            else ResourcesRotations[i] = Vector3.zero;
+        }
+        
+        // Лог для проверки в консоли Unity, что массив перестал быть 0-length
+        Debug.Log($"CSO: Данные успешно восстановлены");
     }
 }

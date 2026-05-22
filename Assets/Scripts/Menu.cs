@@ -10,6 +10,8 @@ public class Menu : MonoBehaviour
     private float GameTimeHours;
     private int WorldIndexDelete;
 
+    public Text[] StartText;
+
     public Animator AnimatorDeletePanel;
     public Text DeleteText;
 
@@ -41,12 +43,18 @@ public class Menu : MonoBehaviour
         Time.timeScale = 1;
 
         GameTimeSecond = PlayerPrefs.GetFloat("AllTime0", 0);
+        if(GameTimeSecond == 0)
+            StartText[0].text = "Начать";
         GameTimeHours = (int)(GameTimeSecond / 3600);
         TimeTexts[0].text = GameTimeHours + " ч  " + (int)((GameTimeSecond - (GameTimeHours * 3600)) / 60) + " мин";
         GameTimeSecond = PlayerPrefs.GetFloat("AllTime1", 0);
+        if(GameTimeSecond == 0)
+            StartText[1].text = "Начать";
         GameTimeHours = (int)(GameTimeSecond / 3600);
         TimeTexts[1].text = GameTimeHours + " ч  " + (int)((GameTimeSecond - (GameTimeHours * 3600)) / 60) + " мин";
         GameTimeSecond = PlayerPrefs.GetFloat("AllTime2", 0);
+        if(GameTimeSecond == 0)
+            StartText[2].text = "Начать";
         GameTimeHours = (int)(GameTimeSecond / 3600);
         TimeTexts[2].text = GameTimeHours + " ч  " + (int)((GameTimeSecond - (GameTimeHours * 3600)) / 60) + " мин";
     }
@@ -78,6 +86,9 @@ public class Menu : MonoBehaviour
         PlayerPrefs.DeleteKey("Heals" + WorldIndexDelete);
         PlayerPrefs.DeleteKey("RevivePosition" + WorldIndexDelete);
         PlayerPrefs.DeleteKey("InventorySlots" + WorldIndexDelete);
+
+
+        StartText[WorldIndexDelete].text = "Начать";
 
 
         // Получаем путь к файлу текущего мира (на основе PlayerPrefs "WorldIndex")

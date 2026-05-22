@@ -14,7 +14,7 @@ public class Objects : MonoBehaviour
 
     void Start()
     {
-        Invoke("UpdateState", 0.05f);
+        Invoke("UpdateState", 0.15f);
 
         Name = AllID.Names[ID];
 
@@ -31,6 +31,7 @@ public class Objects : MonoBehaviour
         {
             IsDelay = TimeIsDelay;
             CenterSpawnedObjects.ResourcesPositions[ObjectID] = transform.position;
+            CenterSpawnedObjects.ResourcesRotations[ObjectID] = transform.eulerAngles;
         }
     }
 
@@ -40,12 +41,14 @@ public class Objects : MonoBehaviour
         {
             CenterSpawnedObjects.ResourcesID[ObjectID] = 1;
             CenterSpawnedObjects.ResourcesPositions[ObjectID] = new Vector3(0, 0, 0);
+            CenterSpawnedObjects.ResourcesRotations[ObjectID] = new Vector3(0, 0, 0);
             CenterSpawnedObjects.ResourcesTypes[ObjectID] = 0;
         }
         else
         {
             CenterSpawnedObjects.ResourcesID[ObjectID] = 0;
             CenterSpawnedObjects.ResourcesPositions[ObjectID] = new Vector3(0, 0, 0);
+            CenterSpawnedObjects.ResourcesRotations[ObjectID] = new Vector3(0, 0, 0);
             CenterSpawnedObjects.ResourcesTypes[ObjectID] = 0;
         }
 
@@ -56,12 +59,14 @@ public class Objects : MonoBehaviour
     {
         if(CenterSpawnedObjects.ResourcesID[ObjectID] == 1 && !Spawned)
         {
-            Debug.Log(ObjectID);
             Destroy(gameObject);
             return;
         }
 
         if(CenterSpawnedObjects.ResourcesPositions[ObjectID] != new Vector3(0, 0, 0))
+        {
             transform.position = CenterSpawnedObjects.ResourcesPositions[ObjectID];
+            transform.rotation = Quaternion.Euler(CenterSpawnedObjects.ResourcesPositions[ObjectID]);
+        }
     }
 }

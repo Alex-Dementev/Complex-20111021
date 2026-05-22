@@ -24,9 +24,8 @@ public class PauseController : MonoBehaviour
     {
         IsDelay -= Time.unscaledDeltaTime;
 
-        if (PauseAction.IsPressed())
+        if (PauseAction.triggered)
         {
-            Debug.Log("Pause");
             if(IsDelay <= 0)
             {
                 if(IsActive)

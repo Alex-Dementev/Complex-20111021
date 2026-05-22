@@ -22,7 +22,6 @@ public class LocationToRevive : MonoBehaviour
             if(IsABase)
             {
                 CharacterContorller.RevivePosition = TransformEmpty.position;
-                Debug.Log("Сохранение позиции для возрождения!");
             }
         }
     }
