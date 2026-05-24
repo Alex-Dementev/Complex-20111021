@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 public class InventoryPanel : MonoBehaviour
 {
+    public static InventoryPanel Instance;
     public InputActionAsset inputActions;
     private InputAction InventoryAction;
     public GameObject InventoryObject;
@@ -23,6 +24,11 @@ public class InventoryPanel : MonoBehaviour
         InventoryAction = playerMap.FindAction("Inventory");
 
         InventoryAction.Enable();
+    }
+
+    void Awake()
+    {
+        Instance = this;
     }
 
     // Update is called once per frame

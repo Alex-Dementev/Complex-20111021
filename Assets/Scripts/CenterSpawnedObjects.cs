@@ -11,10 +11,17 @@ public class CenterSpawnedObjects : MonoBehaviour
     public int[] ResourcesTypes = new int[14000];
     public int[][] ResourcesItems = new int[2000][];
     public string[] ResourcesNames = new string[2000];
+    public static CenterSpawnedObjects Instance;
+    public static bool Load;
 
     void Start()
     {
         LoadAllResourcesData();
+    }
+
+    void Awake()
+    {
+        Instance = this;
     }
 
     private string GetSavePath()
@@ -218,7 +225,8 @@ public class CenterSpawnedObjects : MonoBehaviour
             else ResourcesRotations[i] = Vector3.zero;
         }
         
-        // Лог для проверки в консоли Unity, что массив перестал быть 0-length
+        Load = true;
+        
         Debug.Log($"CSO: Данные успешно восстановлены");
     }
 }

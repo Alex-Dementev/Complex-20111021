@@ -97,7 +97,7 @@ public class CharacterContorller : MonoBehaviour
         moveAction = playerMap.FindAction("Move");
         lookAction = playerMap.FindAction("Look");
         jumpAction = playerMap.FindAction("Jump");
-        sprintAction = playerMap.FindAction("Sprint");
+        sprintAction = playerMap.FindAction("Shift");
     }
 
     void OnEnable()
@@ -202,6 +202,8 @@ public class CharacterContorller : MonoBehaviour
 
         RevivePosition = pos2;
     }
+
+    
 
     void Update()
     {

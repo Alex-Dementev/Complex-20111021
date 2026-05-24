@@ -4,35 +4,38 @@ using UnityEngine.InputSystem;
 
 public class LiftAnObject : MonoBehaviour
 {
+    public static LiftAnObject Instance;
     private float distance = 6f;
     private float radius = 0.05f;
     public Text NameObject;
     public InputActionAsset inputActions;
     private InputAction LiftAction;
     private InputAction DestroyAction;
-    private Objects Object;
-    private Closet Closet;
     public PauseController PauseController;
     public InventoryPanel InventoryPanel;
     public Animator AnimatorNameObject;
-    public Animator AnimatorFullInventory;
+    public Animator TrableAnimator;
     private bool AnimatorController;
-    public InventorySlots InventorySlots;
-    private int ObjectID;
     private bool FullInventoryStart;
-    private bool FullInventoryEnd;
-    private float IsDelayFullInvetoryAnimator;
+    private bool TrableAnimateEnd;
+    private float IsDelayTrableAnimator;
     public Text TrableText;
+    private IInteractable IInteractable;
 
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     void Update()
     {
-        IsDelayFullInvetoryAnimator -= Time.deltaTime;
+        IsDelayTrableAnimator -= Time.deltaTime;
 
-        if(IsDelayFullInvetoryAnimator <= 0 && FullInventoryEnd)
+        if(IsDelayTrableAnimator <= 0 && TrableAnimateEnd)
         {
-            AnimatorFullInventory.CrossFade("End", 0.2f);
-            FullInventoryEnd = false;
+            TrableAnimator.CrossFade("End", 0.2f);
+            TrableAnimateEnd = false;
         }
 
         CheckObjects();
@@ -40,58 +43,24 @@ public class LiftAnObject : MonoBehaviour
         // 🔥 визуализация направления
         Debug.DrawRay(transform.position, transform.forward * distance, Color.green);
 
-        if(LiftAction.triggered && Object != null && Closet == null && !PauseController.IsActive && !InventoryPanel.IsActive)
-        {
-            FullInventoryStart = true;
-
-            for(int i = 0; i < InventorySlots.TotalSlots; i++)
-            {
-                if(InventorySlots.IndexSlots[i] == 0 && Object != null)
-                {
-                    InventorySlots.IndexSlots[i] = ObjectID;
-                    Object.DestroyObject();
-                    Object = null;
-                    FullInventoryStart = false;
-                    break;
-                }
-            }
-
-            if(FullInventoryStart)
-            {
-                TrableText.text = "Инвентарь полон";
-                FullInventoryStart = false;
-                if(!FullInventoryEnd)
-                    AnimatorFullInventory.CrossFade("Start", 0.2f);
-                IsDelayFullInvetoryAnimator = 2;
-                FullInventoryEnd = true;
-            }
-        }
         
-        if(LiftAction.triggered && Closet != null && Object == null && !PauseController.IsActive && !InventoryPanel.IsActive)
+        if(LiftAction.triggered && IInteractable != null && !PauseController.IsActive && !InventoryPanel.IsActive)
         {
-            InventoryPanel.OpenCloset();
-            InventorySlots.Closet = Closet;
-            InventorySlots.UpdateCloset();
-            Closet = null;
+            IInteractable.LeftClick();
         }
-        if(DestroyAction.triggered && Closet != null && Object == null && !PauseController.IsActive && !InventoryPanel.IsActive)
+        if(DestroyAction.triggered && IInteractable != null && !PauseController.IsActive && !InventoryPanel.IsActive)
         {
-            for(int i = 0; i < Closet.Slots.Length; i++)
-            {
-                if(Closet.Slots[i] != 0)
-                {
-                    TrableText.text = "Нельзя";
-                    if(!FullInventoryEnd)
-                        AnimatorFullInventory.CrossFade("Start", 0.2f);
-                    IsDelayFullInvetoryAnimator = 2;
-                    FullInventoryEnd = true;
-                    return;
-                }
-            }
-
-            Closet.DestroyCloset();
-            Closet = null;
+            IInteractable.RightClick();
         }
+    }
+    
+    public void StartTrableAnimator(string Text)
+    {
+        TrableText.text = Text;
+        if(!TrableAnimateEnd)
+            TrableAnimator.CrossFade("Start", 0.2f);
+        IsDelayTrableAnimator = 2;
+        TrableAnimateEnd = true;
     }
 
     void CheckObjects()
@@ -106,61 +75,21 @@ public class LiftAnObject : MonoBehaviour
 
         if (Physics.CapsuleCast(point1, point2, radius, direction, out hit, distance))
         {
-            if (hit.collider.CompareTag("Object"))
+            IInteractable = hit.collider.GetComponent<IInteractable>();
+
+            if (IInteractable != null)
             {
-                Object = hit.collider.GetComponent<Objects>();
+                NameObject.text = IInteractable.GetName();
 
-                if (Object != null)
+                if(!AnimatorController)
                 {
-                    NameObject.text = "" + Object.Name;
-                    ObjectID = Object.ID;
-
-                    if(!AnimatorController)
-                    {
-                        AnimatorController = true;
-                        AnimatorNameObject.CrossFade("Start", 0.2f);
-                    }
+                    AnimatorController = true;
+                    AnimatorNameObject.CrossFade("Start", 0.2f);
                 }
             }
-            else if(!hit.collider.CompareTag("Closet"))
+            else
             {
-                Object = null;
-
-                if(AnimatorController)
-                {
-                    AnimatorController = false;
-                    AnimatorNameObject.CrossFade("End", 0.2f);
-                }
-            }
-
-            if (hit.collider.CompareTag("Closet"))
-            {
-                Closet = hit.collider.GetComponent<Closet>();
-
-                if (Closet != null)
-                {
-                    NameObject.text = "Шкаф"; // + Closet.Name
-
-                    if(!AnimatorController)
-                    {
-                        AnimatorController = true;
-                        AnimatorNameObject.CrossFade("Start", 0.2f);
-                    }
-                }
-            }
-            else if(!hit.collider.CompareTag("Object"))
-            {
-                if(AnimatorController)
-                {
-                    AnimatorController = false;
-                    AnimatorNameObject.CrossFade("End", 0.2f);
-                }
-            }
-
-            if(!hit.collider.CompareTag("Closet") && !hit.collider.CompareTag("Object"))
-            {
-                Object = null;
-                Closet = null;
+                IInteractable = null;
 
                 if(AnimatorController)
                 {
@@ -171,9 +100,6 @@ public class LiftAnObject : MonoBehaviour
         }
         else
         {
-            Object = null;
-            Closet = null;
-
             if(AnimatorController)
             {
                 AnimatorController = false;

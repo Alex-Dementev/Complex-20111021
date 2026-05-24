@@ -1,55 +1,73 @@
 using UnityEngine;
 
-public class Objects : MonoBehaviour
+public class Objects : MonoBehaviour, IInteractable
 {
     public int ID;
     public int ObjectID;
     public string Name;
     public AllID AllID;
-    public CenterSpawnedObjects CenterSpawnedObjects;
-    private float IsDelay;
-    private float TimeIsDelay;
     public bool Spawned;
+    private bool Saved;
+    private bool Load;
 
 
     void Start()
     {
-        Invoke("UpdateState", 0.15f);
-
         Name = AllID.Names[ID];
-
-        TimeIsDelay = Random.Range(1.5f, 2.5f);
-        IsDelay = TimeIsDelay;
     }
 
     // Update is called once per frame
     void Update()
     {
-        IsDelay -= Time.deltaTime;
-
-        if(IsDelay <= 0)
+        if(CenterSpawnedObjects.Load)
         {
-            IsDelay = TimeIsDelay;
-            CenterSpawnedObjects.ResourcesPositions[ObjectID] = transform.position;
-            CenterSpawnedObjects.ResourcesRotations[ObjectID] = transform.eulerAngles;
+            if(!Load)
+                UpdateState();
+
+            if(PauseController.OpenPause && !Saved)
+            {
+                CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] = transform.position;
+                CenterSpawnedObjects.Instance.ResourcesRotations[ObjectID] = transform.eulerAngles;
+                Saved = true;
+            }
+            else if(!PauseController.OpenPause)
+                Saved = false;
         }
     }
 
-    public void DestroyObject()
+    public void LeftClick()
     {
+        bool foundSlot = false;
+        for(int i = 0; i < InventorySlots.Instance.TotalSlots; i++)
+        {
+            if(InventorySlots.Instance.IndexSlots[i] == 0)
+            {
+                InventorySlots.Instance.IndexSlots[i] = ID;
+                foundSlot = true;
+                break;
+            }
+        }
+
+        if(!foundSlot)
+        {
+            LiftAnObject.Instance.StartTrableAnimator("Инвентарь полон");
+            return;
+        }
+
+
         if(!Spawned)
         {
-            CenterSpawnedObjects.ResourcesID[ObjectID] = 1;
-            CenterSpawnedObjects.ResourcesPositions[ObjectID] = new Vector3(0, 0, 0);
-            CenterSpawnedObjects.ResourcesRotations[ObjectID] = new Vector3(0, 0, 0);
-            CenterSpawnedObjects.ResourcesTypes[ObjectID] = 0;
+            CenterSpawnedObjects.Instance.ResourcesID[ObjectID] = 1;
+            CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] = new Vector3(0, 0, 0);
+            CenterSpawnedObjects.Instance.ResourcesRotations[ObjectID] = new Vector3(0, 0, 0);
+            CenterSpawnedObjects.Instance.ResourcesTypes[ObjectID] = 0;
         }
         else
         {
-            CenterSpawnedObjects.ResourcesID[ObjectID] = 0;
-            CenterSpawnedObjects.ResourcesPositions[ObjectID] = new Vector3(0, 0, 0);
-            CenterSpawnedObjects.ResourcesRotations[ObjectID] = new Vector3(0, 0, 0);
-            CenterSpawnedObjects.ResourcesTypes[ObjectID] = 0;
+            CenterSpawnedObjects.Instance.ResourcesID[ObjectID] = 0;
+            CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] = new Vector3(0, 0, 0);
+            CenterSpawnedObjects.Instance.ResourcesRotations[ObjectID] = new Vector3(0, 0, 0);
+            CenterSpawnedObjects.Instance.ResourcesTypes[ObjectID] = 0;
         }
 
         Destroy(gameObject);
@@ -57,16 +75,28 @@ public class Objects : MonoBehaviour
 
     public void UpdateState()
     {
-        if(CenterSpawnedObjects.ResourcesID[ObjectID] == 1 && !Spawned)
+        Load = true;
+
+        if(CenterSpawnedObjects.Instance.ResourcesID[ObjectID] == 1 && !Spawned)
         {
             Destroy(gameObject);
             return;
         }
 
-        if(CenterSpawnedObjects.ResourcesPositions[ObjectID] != new Vector3(0, 0, 0))
+        if(CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] != new Vector3(0, 0, 0))
         {
-            transform.position = CenterSpawnedObjects.ResourcesPositions[ObjectID];
-            transform.rotation = Quaternion.Euler(CenterSpawnedObjects.ResourcesPositions[ObjectID]);
+            transform.position = CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID];
+            transform.rotation = Quaternion.Euler(CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID]);
         }
+    }
+
+    public void RightClick()
+    {
+        
+    }
+
+    public string GetName()
+    {
+        return Name;
     }
 }

@@ -1,20 +1,18 @@
 using UnityEngine;
 
-public class Closet : MonoBehaviour
+public class Closet : MonoBehaviour, IInteractable
 {
     //public TMP_Text Name;
     public int[] Slots;
     public int TotalSlots;
     public bool Spawned;
     public int ClosetType;
-    public CenterSpawnedObjects CenterSpawnedObjects;
     public int ID;
     private int Price;
-    public InventorySlots InventorySlots;
+    public InventoryPanel InventoryPanel;
+    private bool OnSave;
+    private bool Load;
 
-    private float IsDelay;
-    private float TimeIsDelay;
-    private bool Delay;
     
 
     void Start()
@@ -24,11 +22,11 @@ public class Closet : MonoBehaviour
 
     public void UpdateState()
     {
+        Load = true;
+
         if(!Spawned)
         {
-            Delay = true;
-
-            if(CenterSpawnedObjects.ResourcesID[ID + 12000] == 1)
+            if(CenterSpawnedObjects.Instance.ResourcesID[ID + 12000] == 1)
             {
                 Destroy(gameObject);
             }
@@ -46,16 +44,16 @@ public class Closet : MonoBehaviour
                 Price = 1;
             }
 
-            if (CenterSpawnedObjects.ResourcesItems[ID] == null)
-                CenterSpawnedObjects.ResourcesItems[ID] = new int[Slots.Length];
+            if (CenterSpawnedObjects.Instance.ResourcesItems[ID] == null)
+                CenterSpawnedObjects.Instance.ResourcesItems[ID] = new int[Slots.Length];
 
-            for(int i = 0; i < Slots.Length; i++)
+            for(int i = 0; i < TotalSlots; i++)
             {
-                Slots[i] = CenterSpawnedObjects.ResourcesItems[ID][i];
+                Slots[i] = CenterSpawnedObjects.Instance.ResourcesItems[ID][i];
             }
 
-            CenterSpawnedObjects.ResourcesPositions[ID + 12000] = transform.position;
-            CenterSpawnedObjects.ResourcesRotations[ID + 12000] = transform.eulerAngles;
+            CenterSpawnedObjects.Instance.ResourcesPositions[ID + 12000] = transform.position;
+            CenterSpawnedObjects.Instance.ResourcesRotations[ID + 12000] = transform.eulerAngles;
         }
         else
         {
@@ -70,80 +68,92 @@ public class Closet : MonoBehaviour
                 Price = 1;
             }
 
-            if (CenterSpawnedObjects.ResourcesItems[ID] == null)
-                CenterSpawnedObjects.ResourcesItems[ID] = new int[Slots.Length]; 
+            if (CenterSpawnedObjects.Instance.ResourcesItems[ID] == null)
+                CenterSpawnedObjects.Instance.ResourcesItems[ID] = new int[Slots.Length]; 
 
             for(int i = 0; i < Slots.Length; i++)
             {
-                Slots[i] = CenterSpawnedObjects.ResourcesItems[ID][i];
+                Slots[i] = CenterSpawnedObjects.Instance.ResourcesItems[ID][i];
             }
         }
-
-        TimeIsDelay = Random.Range(1.5f, 2.5f);
-        IsDelay = TimeIsDelay;
     }
 
     void Update()
     {
-        IsDelay -= Time.deltaTime;
-
-        if(IsDelay <= 0)
+        if(CenterSpawnedObjects.Load)
         {
-            IsDelay = TimeIsDelay;
+            if(!Load)
+                UpdateState();
 
-            if(Spawned)
-                Delay = true;
-
-            if(Delay)
+            if(!OnSave && PauseController.OpenPause && Load)
                 UpdateCloset();
+            else if(!PauseController.OpenPause)
+                OnSave = false;
         }
     }
 
     public void UpdateCloset()
     {
-        CenterSpawnedObjects.ResourcesPositions[ID + 12000] = transform.position;
-        CenterSpawnedObjects.ResourcesRotations[ID + 12000] = transform.eulerAngles;
+        OnSave = true;
 
-        CenterSpawnedObjects.ResourcesTypes[ID + 12000] = ClosetType;
+        CenterSpawnedObjects.Instance.ResourcesPositions[ID + 12000] = transform.position;
+        CenterSpawnedObjects.Instance.ResourcesRotations[ID + 12000] = transform.eulerAngles;
 
-        if (CenterSpawnedObjects.ResourcesItems[ID] == null || CenterSpawnedObjects.ResourcesItems[ID].Length != Slots.Length)
+        CenterSpawnedObjects.Instance.ResourcesTypes[ID + 12000] = ClosetType;
+
+        if (CenterSpawnedObjects.Instance.ResourcesItems[ID] == null || CenterSpawnedObjects.Instance.ResourcesItems[ID].Length != Slots.Length)
         {
-            CenterSpawnedObjects.ResourcesItems[ID] = new int[Slots.Length]; 
+            CenterSpawnedObjects.Instance.ResourcesItems[ID] = new int[Slots.Length]; 
         }
         
         for(int i = 0; i < Slots.Length; i++)
         {
-            CenterSpawnedObjects.ResourcesItems[ID][i] = Slots[i];
+            CenterSpawnedObjects.Instance.ResourcesItems[ID][i] = Slots[i];
         }
     }
 
-    public void DestroyCloset()
+    public void RightClick()
     {
         for(int i = 0; i < Slots.Length; i++)
         {
             if(Slots[i] != 0)
+            {
+                LiftAnObject.Instance.StartTrableAnimator("Нельзя");
                 return;
+            }
         }
 
         if(Spawned)
-            CenterSpawnedObjects.ResourcesID[ID + 12000] = 0;
+            CenterSpawnedObjects.Instance.ResourcesID[ID + 12000] = 0;
         else
-            CenterSpawnedObjects.ResourcesID[ID + 12000] = 1;
+            CenterSpawnedObjects.Instance.ResourcesID[ID + 12000] = 1;
 
-        CenterSpawnedObjects.ResourcesPositions[ID + 12000] = new Vector3(0, 0, 0);
-        CenterSpawnedObjects.ResourcesRotations[ID + 12000] = new Vector3(0, 0, 0);
-        CenterSpawnedObjects.ResourcesTypes[ID + 12000] = 0;
+        CenterSpawnedObjects.Instance.ResourcesPositions[ID + 12000] = new Vector3(0, 0, 0);
+        CenterSpawnedObjects.Instance.ResourcesRotations[ID + 12000] = new Vector3(0, 0, 0);
+        CenterSpawnedObjects.Instance.ResourcesTypes[ID + 12000] = 0;
 
-        CenterSpawnedObjects.ResourcesNames[ID] = null;
-        CenterSpawnedObjects.ResourcesItems[ID] = null;
+        CenterSpawnedObjects.Instance.ResourcesNames[ID] = null;
+        CenterSpawnedObjects.Instance.ResourcesItems[ID] = null;
 
-        InventorySlots.SpawnedID = 2;
+        InventorySlots.Instance.SpawnedID = 2;
 
         for(int i = 0; i < Price; i++)
         {
-            InventorySlots.SpawnResourcetAfterDestroy();
+            InventorySlots.Instance.SpawnResourcetAfterDestroy();
         }
 
         Destroy(gameObject);
+    }
+
+    public string GetName()
+    {
+        return "Шкаф";
+    }
+
+    public void LeftClick()
+    {
+        InventoryPanel.Instance.OpenCloset();
+        InventorySlots.Instance.Closet = this;
+        InventorySlots.Instance.UpdateCloset();
     }
 }

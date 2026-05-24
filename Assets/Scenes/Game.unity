@@ -2209,6 +2209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f192b665630e88548af300165af1d646, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlots
+  inputActions: {fileID: -944628639613478452, guid: 247995d0829a12342aee57b61c7ae221, type: 3}
   ImageSlots:
   - {fileID: 2104059742}
   - {fileID: 1274898760}
@@ -2258,9 +2259,7 @@ MonoBehaviour:
   - {fileID: 1802598699}
   - {fileID: 150387459}
   - {fileID: 1197069177}
-  TotalSlots: 0
   TotalClosetSlots: 5
-  IndexSlots: 
   Slots:
   - {fileID: 1091536372}
   - {fileID: 312755367}
@@ -33783,8 +33782,7 @@ MonoBehaviour:
   PauseController: {fileID: 229263076}
   InventoryPanel: {fileID: 229263077}
   AnimatorNameObject: {fileID: 763129144}
-  AnimatorFullInventory: {fileID: 1328587147}
-  InventorySlots: {fileID: 229263079}
+  TrableAnimator: {fileID: 1328587147}
   TrableText: {fileID: 1328587148}
 --- !u!1001 &358349359
 PrefabInstance:
@@ -51204,6 +51202,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 184943563606044427, guid: 74523dcec6dab9944a68acdcaff7b8a1, type: 3}
+      propertyPath: InventoryPanel
+      value: 
+      objectReference: {fileID: 229263077}
+    - target: {fileID: 184943563606044427, guid: 74523dcec6dab9944a68acdcaff7b8a1, type: 3}
       propertyPath: InventorySlots
       value: 
       objectReference: {fileID: 229263079}
@@ -51320,6 +51322,10 @@ PrefabInstance:
       propertyPath: ID
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7975973198024202552, guid: 6ac7d5cbaa7a9974599eadbe5da9cda9, type: 3}
+      propertyPath: InventoryPanel
+      value: 
+      objectReference: {fileID: 229263077}
     - target: {fileID: 7975973198024202552, guid: 6ac7d5cbaa7a9974599eadbe5da9cda9, type: 3}
       propertyPath: InventorySlots
       value: 

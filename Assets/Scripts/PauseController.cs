@@ -20,6 +20,8 @@ public class PauseController : MonoBehaviour
     private float TimeSave;
     public InventoryPanel InventoryPanel;
 
+    public static bool OpenPause;
+
     void Update()
     {
         IsDelay -= Time.unscaledDeltaTime;
@@ -32,6 +34,7 @@ public class PauseController : MonoBehaviour
                 {
                     IsActive = false;
                     PauseAnimator.Play("Close");
+                    OpenPause = false;
 
                     if(!InventoryPanel.IsActive)
                     {
@@ -43,8 +46,9 @@ public class PauseController : MonoBehaviour
                 else
                 {
                     PauseObject.SetActive(true);
-                    PauseAnimator.Play("Open");
                     IsActive = true;
+                    PauseAnimator.Play("Open");
+                    OpenPause = true;
 
                     Speed = 0;
 
@@ -87,6 +91,7 @@ public class PauseController : MonoBehaviour
         if(IsActive)
         {
             PauseAnimator.Play("Close");
+            OpenPause = false;
 
             if(!InventoryPanel.IsActive)
                 Speed = 1;

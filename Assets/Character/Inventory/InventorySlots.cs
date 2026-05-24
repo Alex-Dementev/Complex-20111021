@@ -1,32 +1,45 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class InventorySlots : MonoBehaviour
 {
+    public static InventorySlots Instance;
+    public InputActionAsset inputActions;
+    private InputAction FastSendAction;
     public Image[] ImageSlots;
-    [HideInInspector]public int TotalSlots = 5;
-    [HideInInspector]public int TotalClosetSlots = 5;
-    [HideInInspector]public int[] IndexSlots;
+    public int TotalSlots = 5;
+    public int TotalClosetSlots = 5;
+    public int[] IndexSlots;
     public GameObject[] Slots;
     public Image[] SlotsAllocations;
     public Text Name;
     public Text Description;
     public AllID AllID;
-    private int CurrentSlot = -1;
+    public int CurrentSlot = -1;
     private int PreviousSlot = -1;
     [HideInInspector] public int[] ClosetSlots;
     [HideInInspector] public Closet Closet;
 
     [Header("Ссылки для спавна")]
     public Transform Player;
-    public CenterSpawnedObjects CenterSpawnedObjects;
     public int SpawnedID;
 
+    private ModuleThrowOut ModuleThrowOut;
+
+
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
         TotalSlots = 6;
         IndexSlots = new int[49];
+
+        ModuleThrowOut = new ModuleThrowOut();
 
         for(int i = 0; i < 48; i++)
         {
@@ -55,6 +68,10 @@ public class InventorySlots : MonoBehaviour
 
     void Update()
     {
+        var playerMap = inputActions.FindActionMap("Player");
+        FastSendAction = playerMap.FindAction("Shift");
+        FastSendAction.Enable();
+
         for(int i = 0; i < ImageSlots.Length; i++)
         {
             if(ImageSlots[i] != null)
@@ -67,12 +84,11 @@ public class InventorySlots : MonoBehaviour
         if(Closet != null)
         {
             TotalClosetSlots = Closet.TotalSlots;
-            TotalClosetSlots += 24;
             
 
             for (int i = 24; i < 48; i++)
             {
-                if(i <= TotalClosetSlots - 1)
+                if(i <= (TotalClosetSlots + 23))
                 {
                     Slots[i].SetActive(true);
                 }
@@ -93,6 +109,40 @@ public class InventorySlots : MonoBehaviour
 
     public void ClickToSlot(int Index)
     {
+        if(Closet != null && FastSendAction.IsPressed())
+        {
+            if(Index <= TotalSlots)
+            {
+                for(int i = 24; i < (TotalClosetSlots + 24); i++)
+                {
+                    if(IndexSlots[i] == 0)
+                    {
+                        IndexSlots[i] = IndexSlots[Index];
+                        IndexSlots[Index] = 0;
+                        Closet.Slots[i - 24] = IndexSlots[i];
+                        Closet.UpdateCloset();
+
+                        return;
+                    }
+                }
+            }
+            else if(Index >= 24)
+            {
+                for(int i = 0; i < TotalSlots; i++)
+                {
+                    if(IndexSlots[i] == 0)
+                    {
+                        IndexSlots[i] = IndexSlots[Index];
+                        IndexSlots[Index] = 0;
+                        Closet.Slots[Index - 24] = 0;
+                        Closet.UpdateCloset();
+
+                        return;
+                    }
+                }
+            }
+        }
+
         if(PreviousSlot != -1)
             SlotsAllocations[PreviousSlot].color = new Color(55f/255f, 55f/255f, 55f/255f);
 
@@ -144,87 +194,12 @@ public class InventorySlots : MonoBehaviour
 
     public void ThrowOut()
     {
-        if(CurrentSlot != -1)
-        {
-            if(IndexSlots[CurrentSlot] != 0)
-            {
-                Vector3 pos = new Vector3(
-                Player.position.x + Random.Range(-0.5f, 0.5f),
-                Player.position.y + 0.2f,
-                Player.position.z + Random.Range(-0.5f, 0.5f));
-
-                int ObjectID = -1;
-
-                for(int i = 4500; i < 12000; i++)
-                {
-                    if(CenterSpawnedObjects.ResourcesID[i] == 0)
-                    {
-                        ObjectID = i;
-                        break;
-                    }
-                }
-
-                Objects obj = Instantiate(AllID.Prefab[IndexSlots[CurrentSlot]], pos, Quaternion.identity);
-
-                CenterSpawnedObjects.ResourcesID[ObjectID] = 1;
-                CenterSpawnedObjects.ResourcesPositions[ObjectID] = pos;
-                CenterSpawnedObjects.ResourcesTypes[ObjectID] = IndexSlots[CurrentSlot];
-
-                obj.ObjectID = ObjectID;
-                obj.Spawned = true;
-                obj.ID = IndexSlots[CurrentSlot];
-                obj.AllID = AllID;
-                obj.CenterSpawnedObjects = CenterSpawnedObjects;
-
-                IndexSlots[CurrentSlot] = 0;
-                ImageSlots[CurrentSlot].color = new Color(0, 0, 0, 0f);
-
-                if(Closet != null)
-                    Closet.Slots[CurrentSlot - 24] = 0;
-
-                ClickToSlot(CurrentSlot);
-            }
-        }
+        ModuleThrowOut.ThrowOut();
     }
 
     public void SpawnResourcetAfterDestroy()
     {
-        for(int i = 0; i < TotalSlots; i++)
-        {
-            if(IndexSlots[i] == 0)
-            {
-                IndexSlots[i] = SpawnedID;
-                return;
-            }
-        }
-
-        Vector3 pos = new Vector3(
-        Player.position.x + Random.Range(-0.5f, 0.5f),
-        Player.position.y + 0.2f,
-        Player.position.z + Random.Range(-0.5f, 0.5f));
-
-        int ObjectID = -1;
-
-        for(int i = 4500; i < 12000; i++)
-        {
-            if(CenterSpawnedObjects.ResourcesID[i] == 0)
-            {
-                ObjectID = i;
-                break;
-            }
-        }
-
-        Objects obj = Instantiate(AllID.Prefab[SpawnedID], pos, Quaternion.identity);
-
-        CenterSpawnedObjects.ResourcesID[ObjectID] = 1;
-        CenterSpawnedObjects.ResourcesPositions[ObjectID] = pos;
-        CenterSpawnedObjects.ResourcesTypes[ObjectID] = SpawnedID;
-
-        obj.ObjectID = ObjectID;
-        obj.Spawned = true;
-        obj.ID = SpawnedID;
-        obj.AllID = AllID;
-        obj.CenterSpawnedObjects = CenterSpawnedObjects;
+        ModuleThrowOut.SpawnResourcetAfterDestroy();
     }
 
     public void Save()
@@ -248,7 +223,7 @@ public class InventorySlots : MonoBehaviour
 
                 for(int i = 4500; i < 12000; i++)
                 {
-                    if(CenterSpawnedObjects.ResourcesID[i] == 0)
+                    if(CenterSpawnedObjects.Instance.ResourcesID[i] == 0)
                     {
                         ObjectID = i;
                         break;
@@ -257,20 +232,19 @@ public class InventorySlots : MonoBehaviour
 
                 Objects obj = Instantiate(AllID.Prefab[IndexSlots[d]], pos, Quaternion.identity);
 
-                CenterSpawnedObjects.ResourcesID[ObjectID] = 1;
-                CenterSpawnedObjects.ResourcesPositions[ObjectID] = pos;
-                CenterSpawnedObjects.ResourcesTypes[ObjectID] = IndexSlots[d];
+                CenterSpawnedObjects.Instance.ResourcesID[ObjectID] = 1;
+                CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] = pos;
+                CenterSpawnedObjects.Instance.ResourcesTypes[ObjectID] = IndexSlots[d];
 
                 obj.ObjectID = ObjectID;
                 obj.Spawned = true;
                 obj.ID = IndexSlots[d];
                 obj.AllID = AllID;
-                obj.CenterSpawnedObjects = CenterSpawnedObjects;
 
                 IndexSlots[d] = 0;
                 ImageSlots[d].color = new Color(0, 0, 0, 0f);
 
-                if(Closet != null)
+                if(Closet != null && CurrentSlot != -1)
                     Closet.Slots[CurrentSlot] = 0;
 
                 Description.text = "";
