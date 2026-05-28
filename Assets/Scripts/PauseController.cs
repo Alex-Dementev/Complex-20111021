@@ -7,23 +7,29 @@ public class PauseController : MonoBehaviour
 {
     private InputAction PauseAction;
     public Animator PauseAnimator;
-    [HideInInspector]public bool IsActive;
+    public static bool IsActive;
     private float IsDelay;
     public GameObject PauseObject;
     public InputActionAsset inputActions;
-    [HideInInspector]public float Speed = 1f;
+    public static float Speed = 1f;
     public Slider SliderSensitivity;
     private float MouseSensitivity;
     public Animator BlackScreen;
     public Image IdentificatorSave;
     public AllTimeInGame AllTimeInGame;
     private float TimeSave;
-    public InventoryPanel InventoryPanel;
-
-    public static bool OpenPause;
+    public static bool InvisibleOperations;
 
     void Update()
     {
+        var State = PauseAnimator.GetCurrentAnimatorStateInfo(0);
+        if(!InvisibleOperations && State.IsName("Open") && State.normalizedTime >= 0.85f && Speed == 0.05f && IsActive)
+        {
+            InvisibleOperations = true;
+            System.GC.Collect();
+            Debug.Log("Очистка оперативной памяти и сохранение данных в массивы");
+        }
+
         IsDelay -= Time.unscaledDeltaTime;
 
         if (PauseAction.triggered)
@@ -33,10 +39,10 @@ public class PauseController : MonoBehaviour
                 if(IsActive)
                 {
                     IsActive = false;
+                    InvisibleOperations = false;
                     PauseAnimator.Play("Close");
-                    OpenPause = false;
 
-                    if(!InventoryPanel.IsActive)
+                    if(!InventoryPanel.Instance.IsActive)
                     {
                         Speed = 1;
                         Cursor.lockState = CursorLockMode.Locked;
@@ -48,7 +54,6 @@ public class PauseController : MonoBehaviour
                     PauseObject.SetActive(true);
                     IsActive = true;
                     PauseAnimator.Play("Open");
-                    OpenPause = true;
 
                     Speed = 0;
 
@@ -60,7 +65,7 @@ public class PauseController : MonoBehaviour
             }
         }
 
-        Time.timeScale = Mathf.MoveTowards(Time.timeScale, Speed, Time.unscaledDeltaTime * 1.7f);
+        Time.timeScale = Mathf.MoveTowards(Time.timeScale, Speed, Time.unscaledDeltaTime * 2.5f);
 
 
         MouseSensitivity = SliderSensitivity.value;
@@ -74,6 +79,8 @@ public class PauseController : MonoBehaviour
 
     void Start()
     {
+        Speed = 1;
+
         var playerMap = inputActions.FindActionMap("Player");
 
         PauseAction = playerMap.FindAction("Pause");
@@ -91,13 +98,12 @@ public class PauseController : MonoBehaviour
         if(IsActive)
         {
             PauseAnimator.Play("Close");
-            OpenPause = false;
 
-            if(!InventoryPanel.IsActive)
+            if(!InventoryPanel.Instance.IsActive)
                 Speed = 1;
-            Debug.Log(InventoryPanel.IsActive);
                 
             IsActive = false;
+            InvisibleOperations = false;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }

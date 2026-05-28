@@ -1,18 +1,22 @@
 using UnityEngine;
 
-public class SpawnObjects : MonoBehaviour
+public class StartSpawn : MonoBehaviour
 {
     public AllID AllID;
     public Closet[] ClosetPrefabs;
     public InventorySlots InventorySlots;
+    private bool Load;
 
-    void Start()
+    void Update()
     {
-        Invoke("Spawn", 0.1f);
+        if(!Load && CenterSpawnedObjects.Load)
+            Spawn();
     }
 
     public void Spawn()
     {
+        Load = true;
+        
         for(int i = 4500; i < 12000; i++)
         {
             if(CenterSpawnedObjects.Instance.ResourcesID[i] == 1)

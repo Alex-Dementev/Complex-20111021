@@ -12,7 +12,6 @@ public class InventoryPanel : MonoBehaviour
     [HideInInspector]public bool IsActive;
     private float IsDelay;
     private float Speed;
-    public PauseController PauseController;
     public GameObject Closet;
     public InventorySlots InventorySlots;
 

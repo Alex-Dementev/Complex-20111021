@@ -13,7 +13,8 @@ public class SystemsController : MonoBehaviour
     private bool ZeroOxygen;
     private bool ZeroHeals;
     private bool Death;
-    public int Heals = 100;
+    public static int Heals = 100;
+    public float HealsToSlider = 100;
     public float MinusOxygen;
     public CharacterContorller CharacterContorller;
 
@@ -27,7 +28,10 @@ public class SystemsController : MonoBehaviour
             Oxygen = 35;
 
         if(PlayerPrefs.HasKey("Heals" + PlayerPrefs.GetInt("WorldIndex", 0)))
+        {
             Heals = PlayerPrefs.GetInt("Heals" + PlayerPrefs.GetInt("WorldIndex", 0));
+            HealsToSlider = Heals;
+        }
         else
             Heals = 100;
 
@@ -70,7 +74,14 @@ public class SystemsController : MonoBehaviour
 
         Oxygen = Mathf.Clamp(Oxygen, 0, SliderOxygen.maxValue);
 
-        SliderHeals.value = Heals;
+        Heals = Mathf.Clamp(Heals, 0, 100);
+
+        if(HealsToSlider - Heals >= 50)
+            HealsToSlider = Mathf.MoveTowards(HealsToSlider, Heals, Time.deltaTime * 70);
+        else
+            HealsToSlider = Mathf.MoveTowards(HealsToSlider, Heals, Time.deltaTime * 35);
+            
+        SliderHeals.value = HealsToSlider;
 
         SliderOxygen.value = Oxygen;
 

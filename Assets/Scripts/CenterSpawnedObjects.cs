@@ -5,12 +5,12 @@ using System.Globalization;
 
 public class CenterSpawnedObjects : MonoBehaviour
 {
-    public int[] ResourcesID = new int[14000];
-    public Vector3[] ResourcesPositions = new Vector3[14000];
-    public Vector3[] ResourcesRotations = new Vector3[14000]; // Новый массив на 14000 для углов Эйлера (X, Y, Z)
-    public int[] ResourcesTypes = new int[14000];
-    public int[][] ResourcesItems = new int[2000][];
-    public string[] ResourcesNames = new string[2000];
+    public int[] ResourcesID = new int[17000];
+    public Vector3[] ResourcesPositions = new Vector3[17000];
+    public Vector3[] ResourcesRotations = new Vector3[17000]; // Новый массив на 17000 для углов Эйлера (X, Y, Z)
+    public int[] ResourcesTypes = new int[17000];
+    public int[][] ResourcesItems = new int[5000][];
+    public string[] ResourcesNames = new string[5000];
     public static CenterSpawnedObjects Instance;
     public static bool Load;
 
@@ -112,12 +112,12 @@ public class CenterSpawnedObjects : MonoBehaviour
 
         if (!File.Exists(path))
         {
-            ResourcesID = new int[14000];
-            ResourcesTypes = new int[14000];
-            ResourcesPositions = new Vector3[14000];
-            ResourcesRotations = new Vector3[14000]; 
-            ResourcesItems = new int[2000][];
-            ResourcesNames = new string[2000];
+            ResourcesID = new int[17000];
+            ResourcesTypes = new int[17000];
+            ResourcesPositions = new Vector3[17000];
+            ResourcesRotations = new Vector3[17000]; 
+            ResourcesItems = new int[5000][];
+            ResourcesNames = new string[5000];
             Debug.Log("CSO: Новые массивы (нет файла сохранений)");
             return; 
         }
@@ -165,7 +165,7 @@ public class CenterSpawnedObjects : MonoBehaviour
 
         // --- 4. Парсинг Предметов ---
         string[] itemsSplit = lines[3].Split('|');
-        ResourcesItems = new int[2000][];
+        ResourcesItems = new int[5000][];
 
         for (int i = 0; i < ResourcesItems.Length; i++)
         {
@@ -198,7 +198,7 @@ public class CenterSpawnedObjects : MonoBehaviour
 
         // --- 5. Парсинг Названий ---
         string[] namesSplit = lines[4].Split('|');
-        ResourcesNames = new string[2000]; 
+        ResourcesNames = new string[5000]; 
 
         for (int i = 0; i < ResourcesNames.Length; i++)
         {
@@ -206,7 +206,7 @@ public class CenterSpawnedObjects : MonoBehaviour
         }
         // --- 6. Парсинг Ротаций ---
         string[] rotSplit = lines[5].Split('|');
-        ResourcesRotations = new Vector3[14000];
+        ResourcesRotations = new Vector3[17000];
         for (int i = 0; i < ResourcesRotations.Length; i++)
         {
             if (i < rotSplit.Length && !string.IsNullOrEmpty(rotSplit[i]))

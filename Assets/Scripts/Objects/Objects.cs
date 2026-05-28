@@ -9,6 +9,7 @@ public class Objects : MonoBehaviour, IInteractable
     public bool Spawned;
     private bool Saved;
     private bool Load;
+    private bool Reised;
 
 
     void Start()
@@ -24,19 +25,23 @@ public class Objects : MonoBehaviour, IInteractable
             if(!Load)
                 UpdateState();
 
-            if(PauseController.OpenPause && !Saved)
+            if(PauseController.InvisibleOperations && !Saved)
             {
                 CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] = transform.position;
                 CenterSpawnedObjects.Instance.ResourcesRotations[ObjectID] = transform.eulerAngles;
                 Saved = true;
             }
-            else if(!PauseController.OpenPause)
+            else if(!PauseController.InvisibleOperations)
                 Saved = false;
         }
     }
 
     public void LeftClick()
     {
+        if(Reised)
+            return;
+        
+        
         bool foundSlot = false;
         for(int i = 0; i < InventorySlots.Instance.TotalSlots; i++)
         {
@@ -44,6 +49,7 @@ public class Objects : MonoBehaviour, IInteractable
             {
                 InventorySlots.Instance.IndexSlots[i] = ID;
                 foundSlot = true;
+                Reised = true;
                 break;
             }
         }
