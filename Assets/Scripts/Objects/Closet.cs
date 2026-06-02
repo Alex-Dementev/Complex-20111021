@@ -8,11 +8,19 @@ public class Closet : MonoBehaviour, IInteractable
     public bool Spawned;
     public int ClosetType;
     public int ID;
-    private int Price;
     public InventoryPanel InventoryPanel;
     private bool OnSave;
     private bool Load;
     [HideInInspector]public string Name;
+    private bool boolDestroy;
+    private AllID AllID;
+
+    private int[] resource1 = new int[2];
+    private int[] resource2 = new int[2];
+    private int[] resource3 = new int[2];
+    private int[] resource4 = new int[2];
+
+    private float StartDelay = 0.3f;
 
     
 
@@ -25,27 +33,27 @@ public class Closet : MonoBehaviour, IInteractable
             if(CenterSpawnedObjects.Instance.ResourcesID[ID + 12000] == 1)
             {
                 Destroy(gameObject);
+
+                return;
             }
 
             if(ClosetType == 0)
             {
                 TotalSlots = 24;
                 Slots = new int[24];
-                Price = 2;
                 Name = "Большой шкаф";
             }
             else if(ClosetType == 1)
             {
                 TotalSlots = 12;
                 Slots = new int[12];
-                Price = 1;
                 Name = "Маленький шкаф";
             }
 
             if (CenterSpawnedObjects.Instance.ResourcesItems[ID] == null)
                 CenterSpawnedObjects.Instance.ResourcesItems[ID] = new int[Slots.Length];
 
-            if (CenterSpawnedObjects.Instance.ResourcesNames[ID] != "")
+            if (CenterSpawnedObjects.Instance.ResourcesNames[ID] != "" && CenterSpawnedObjects.Instance.ResourcesNames[ID] != null)
                 Name = CenterSpawnedObjects.Instance.ResourcesNames[ID];
 
             for(int i = 0; i < TotalSlots; i++)
@@ -60,17 +68,18 @@ public class Closet : MonoBehaviour, IInteractable
         {
             if(ClosetType == 0)
             {
-                TotalSlots = 24;
-                Price = 2;
+                Name = "Большой шкаф";
             }
             else if(ClosetType == 1)
             {
-                TotalSlots = 12;
-                Price = 1;
+                Name = "Маленький шкаф";
             }
 
             if (CenterSpawnedObjects.Instance.ResourcesItems[ID] == null)
                 CenterSpawnedObjects.Instance.ResourcesItems[ID] = new int[Slots.Length]; 
+
+            if (CenterSpawnedObjects.Instance.ResourcesNames[ID] != "" && CenterSpawnedObjects.Instance.ResourcesNames[ID] != null)
+                Name = CenterSpawnedObjects.Instance.ResourcesNames[ID];
 
             for(int i = 0; i < Slots.Length; i++)
             {
@@ -91,6 +100,8 @@ public class Closet : MonoBehaviour, IInteractable
             else if(!PauseController.InvisibleOperations)
                 OnSave = false;
         }
+
+        StartDelay -= Time.deltaTime;
     }
 
     public void UpdateCloset()
@@ -117,6 +128,16 @@ public class Closet : MonoBehaviour, IInteractable
 
     public void RightClick()
     {
+        if(boolDestroy || Time.timeScale != 1 || DestroyPreviewModels.Destroy != null || StartDelay > 0)
+            return;
+
+        boolDestroy = true;
+
+
+        if(Time.timeScale == 0)
+            return;
+
+        
         for(int i = 0; i < Slots.Length; i++)
         {
             if(Slots[i] != 0)
@@ -125,6 +146,48 @@ public class Closet : MonoBehaviour, IInteractable
                 return;
             }
         }
+
+        
+        string[] Resources1 = AllID.BuildResource1[ClosetType].Split('|');
+        resource1[0] = int.Parse(Resources1[0]);
+        if(Resources1[1] != "")
+            resource1[1] = int.Parse(Resources1[2]);
+        InventorySlots.Instance.SpawnedID = 2;
+        for(int i = 0; i < resource1[1]; i++)
+        {
+            InventorySlots.Instance.SpawnResourcetAfterDestroy();
+        }
+
+        string[] Resources2 = AllID.BuildResource2[ClosetType].Split('|');
+        resource2[0] = int.Parse(Resources2[0]);
+        if(Resources2[1] != "")
+            resource2[1] = int.Parse(Resources2[2]);
+        InventorySlots.Instance.SpawnedID = 2;
+        for(int i = 0; i < resource2[1]; i++)
+        {
+            InventorySlots.Instance.SpawnResourcetAfterDestroy();
+        }
+        
+        string[] Resources3 = AllID.BuildResource3[ClosetType].Split('|');
+        resource3[0] = int.Parse(Resources3[0]);
+        if(Resources3[1] != "")
+            resource3[1] = int.Parse(Resources3[2]);
+        InventorySlots.Instance.SpawnedID = 2;
+        for(int i = 0; i < resource3[1]; i++)
+        {
+            InventorySlots.Instance.SpawnResourcetAfterDestroy();
+        }
+
+        string[] Resources4 = AllID.BuildResource4[ClosetType].Split('|');
+        resource4[0] = int.Parse(Resources4[0]);
+        if(Resources4[1] != "")
+            resource4[1] = int.Parse(Resources4[2]);
+        InventorySlots.Instance.SpawnedID = 2;
+        for(int i = 0; i < resource4[1]; i++)
+        {
+            InventorySlots.Instance.SpawnResourcetAfterDestroy();
+        }
+
 
         if(Spawned)
             CenterSpawnedObjects.Instance.ResourcesID[ID + 12000] = 0;
@@ -138,13 +201,6 @@ public class Closet : MonoBehaviour, IInteractable
         CenterSpawnedObjects.Instance.ResourcesNames[ID] = null;
         CenterSpawnedObjects.Instance.ResourcesItems[ID] = null;
 
-        InventorySlots.Instance.SpawnedID = 2;
-
-        for(int i = 0; i < Price; i++)
-        {
-            InventorySlots.Instance.SpawnResourcetAfterDestroy();
-        }
-
         Destroy(gameObject);
     }
 
@@ -155,10 +211,18 @@ public class Closet : MonoBehaviour, IInteractable
 
     public void LeftClick()
     {
+        if(boolDestroy || Time.timeScale != 1 || DestroyPreviewModels.Destroy != null || StartDelay > 0)
+            return;
+        
         InventoryPanel.Instance.OpenCloset();
         InventorySlots.Instance.Closet = this;
         InventorySlots.Instance.UpdateCloset();
         EditableClosetText.Instance.Closet = this;
         EditableClosetText.Instance.input.text = Name;
+    }
+
+    void Start()
+    {
+        AllID = InventorySlots.Instance.AllID;
     }
 }

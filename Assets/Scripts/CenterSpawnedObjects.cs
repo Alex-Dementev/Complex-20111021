@@ -7,7 +7,7 @@ public class CenterSpawnedObjects : MonoBehaviour
 {
     public int[] ResourcesID = new int[17000];
     public Vector3[] ResourcesPositions = new Vector3[17000];
-    public Vector3[] ResourcesRotations = new Vector3[17000]; // Новый массив на 17000 для углов Эйлера (X, Y, Z)
+    public Vector3[] ResourcesRotations = new Vector3[17000];
     public int[] ResourcesTypes = new int[17000];
     public int[][] ResourcesItems = new int[5000][];
     public string[] ResourcesNames = new string[5000];
@@ -119,6 +119,7 @@ public class CenterSpawnedObjects : MonoBehaviour
             ResourcesItems = new int[5000][];
             ResourcesNames = new string[5000];
             Debug.Log("CSO: Новые массивы (нет файла сохранений)");
+            Load = true;
             return; 
         }
 

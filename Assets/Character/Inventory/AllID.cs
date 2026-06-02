@@ -17,6 +17,8 @@ public class AllID : MonoBehaviour
     public string[] BuildResource3;
     public string[] BuildResource4;
     public int[] BuildLevel;
+    public int[] BuildScanned;
     public GameObject[] BuildPrefab;
+    public GameObject[] PreviewPrefab;
     public Sprite[] BuildSprite;
 }

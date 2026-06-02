@@ -8,7 +8,7 @@ public class InventorySlots : MonoBehaviour
     public InputActionAsset inputActions;
     private InputAction FastSendAction;
     private InputAction ThrowOutAction;
-    private InputAction[] QuickSlots = new InputAction[6];
+    private InputAction[] QuickSlots = new InputAction[7];
     public Image[] ImageSlots;
     public Image[] QuickAccessImageSlots;
     public int TotalSlots = 5;
@@ -39,12 +39,12 @@ public class InventorySlots : MonoBehaviour
 
     private void Start()
     {
-        TotalSlots = 6;
-        IndexSlots = new int[49];
+        TotalSlots = 7;
+        IndexSlots = new int[53];
 
         ModuleThrowOut = new ModuleThrowOut();
 
-        for(int i = 0; i < 48; i++)
+        for(int i = 0; i < 52; i++)
         {
             if(i <= TotalSlots - 1)
                 Slots[i].SetActive(true);
@@ -125,9 +125,9 @@ public class InventorySlots : MonoBehaviour
             TotalClosetSlots = Closet.TotalSlots;
             
 
-            for (int i = 24; i < 48; i++)
+            for (int i = 28; i < 52; i++)
             {
-                if(i <= (TotalClosetSlots + 23))
+                if(i <= (TotalClosetSlots + 27))
                 {
                     Slots[i].SetActive(true);
                 }
@@ -139,7 +139,7 @@ public class InventorySlots : MonoBehaviour
 
             for (int i = 0; i < Closet.Slots.Length; i++)
             {
-                IndexSlots[24 + i] = Closet.Slots[i];
+                IndexSlots[28 + i] = Closet.Slots[i];
             }
         }
         else
@@ -163,20 +163,20 @@ public class InventorySlots : MonoBehaviour
         {
             if(Index <= TotalSlots)
             {
-                for(int i = 24; i < (TotalClosetSlots + 24); i++)
+                for(int i = 28; i < (TotalClosetSlots + 28); i++)
                 {
                     if(IndexSlots[i] == 0)
                     {
                         IndexSlots[i] = IndexSlots[Index];
                         IndexSlots[Index] = 0;
-                        Closet.Slots[i - 24] = IndexSlots[i];
+                        Closet.Slots[i - 28] = IndexSlots[i];
                         Closet.UpdateCloset();
 
                         return;
                     }
                 }
             }
-            else if(Index >= 24)
+            else if(Index >= 28)
             {
                 for(int i = 0; i < TotalSlots; i++)
                 {
@@ -184,7 +184,7 @@ public class InventorySlots : MonoBehaviour
                     {
                         IndexSlots[i] = IndexSlots[Index];
                         IndexSlots[Index] = 0;
-                        Closet.Slots[Index - 24] = 0;
+                        Closet.Slots[Index - 28] = 0;
                         Closet.UpdateCloset();
 
                         return;
@@ -215,7 +215,7 @@ public class InventorySlots : MonoBehaviour
             {
                 for (int i = 0; i < Closet.TotalSlots; i++)
                 {
-                    Closet.Slots[i] = IndexSlots[24 + i];
+                    Closet.Slots[i] = IndexSlots[28 + i];
                 }
             }
         }

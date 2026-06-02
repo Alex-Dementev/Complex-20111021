@@ -15,6 +15,7 @@ public class HandItemSpawner : MonoBehaviour
     private InputAction ThrowOutAction;
     public Animator ChangeAnimator;
     private bool ThrowOut;
+    private IBeforeDestroy IBeforeDestroy;
 
 
     void Start()
@@ -28,6 +29,10 @@ public class HandItemSpawner : MonoBehaviour
 
     void Update()
     {
+        if(Time.timeScale == 0)
+            return;
+
+        
         if(InventorySlots.Instance.IndexSlots[0] != OldIndex)
         {
             ChangeAnimator.CrossFade("Change", 0.05f);
@@ -49,8 +54,7 @@ public class HandItemSpawner : MonoBehaviour
     {
         OldIndex = InventorySlots.Instance.IndexSlots[0];
 
-        if(Object != null)
-            Destroy(Object);
+        DestroyObject();
 
         if(InventorySlots.Instance.IndexSlots[0] <= 0)
         {
@@ -60,10 +64,7 @@ public class HandItemSpawner : MonoBehaviour
             return;
         }
             
-        Object = Instantiate(AllID.HandPrefab[OldIndex]);
-
-        Object.transform.SetParent(HandPoint, false);
-
+        InstantiateObject();
 
         Active = true;
         Slot.color = new Color(85f/255f, 85f/255f, 85f/255f);
@@ -78,7 +79,7 @@ public class HandItemSpawner : MonoBehaviour
 
             if(Object != null)
             {
-                Destroy(Object);
+                DestroyObject();
 
                 InventorySlots.Instance.SpawnedID = InventorySlots.Instance.IndexSlots[0];
                 InventorySlots.Instance.ThrowOut(false);
@@ -95,8 +96,7 @@ public class HandItemSpawner : MonoBehaviour
             Active = false;
             Slot.color = new Color(55f/255f, 55f/255f, 55f/255f);
 
-            if(Object != null)
-                Destroy(Object);
+            DestroyObject();
 
             return;
         }
@@ -105,9 +105,26 @@ public class HandItemSpawner : MonoBehaviour
             Active = true;
             Slot.color = new Color(85f/255f, 85f/255f, 85f/255f);
 
-            Object = Instantiate(AllID.HandPrefab[OldIndex]);
-
-            Object.transform.SetParent(HandPoint, false);
+            InstantiateObject();
         }
+    }
+
+    private void InstantiateObject()
+    {
+        Object = Instantiate(AllID.HandPrefab[OldIndex]);
+
+        Object.transform.SetParent(HandPoint, false);
+
+        IBeforeDestroy = Object.GetComponent<IBeforeDestroy>();
+    }
+
+    private void DestroyObject()
+    {
+        if(Object == null)
+            return;
+
+        if(IBeforeDestroy != null)
+            IBeforeDestroy.BeforeDestroy();
+        Destroy(Object);
     }
 }

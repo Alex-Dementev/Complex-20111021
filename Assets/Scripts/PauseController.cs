@@ -17,17 +17,18 @@ public class PauseController : MonoBehaviour
     public Animator BlackScreen;
     public Image IdentificatorSave;
     public AllTimeInGame AllTimeInGame;
-    private float TimeSave;
     public static bool InvisibleOperations;
+    public Button SaveButton;
 
     void Update()
     {
         var State = PauseAnimator.GetCurrentAnimatorStateInfo(0);
-        if(!InvisibleOperations && State.IsName("Open") && State.normalizedTime >= 0.85f && Speed == 0.05f && IsActive)
+        if(!InvisibleOperations && State.IsName("Open") && State.normalizedTime >= 0.85f && Speed <= 0.05f && IsActive)
         {
             InvisibleOperations = true;
             System.GC.Collect();
             Debug.Log("Очистка оперативной памяти и сохранение данных в массивы");
+            SaveButton.interactable = true;
         }
 
         IsDelay -= Time.unscaledDeltaTime;
@@ -49,11 +50,13 @@ public class PauseController : MonoBehaviour
                         Cursor.visible = false;
                     }
                 }
-                else
+                else if(DestroyPreviewModels.Destroy == null)
                 {
                     PauseObject.SetActive(true);
                     IsActive = true;
                     PauseAnimator.Play("Open");
+                    SaveButton.interactable = false;
+                    IdentificatorSave.color = Color.red;
 
                     Speed = 0;
 
@@ -70,11 +73,6 @@ public class PauseController : MonoBehaviour
 
         MouseSensitivity = SliderSensitivity.value;
         PlayerPrefs.SetFloat("Sensitivity", MouseSensitivity);
-
-        if(AllTimeInGame.AllTime >= TimeSave + 15f)
-            IdentificatorSave.color = Color.red;
-        else
-            IdentificatorSave.color = Color.green;
     }
 
     void Start()
@@ -89,8 +87,6 @@ public class PauseController : MonoBehaviour
 
         MouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 3);
         SliderSensitivity.value = MouseSensitivity;
-
-        TimeSave = AllTimeInGame.AllTime + 10f;
     }
 
     public void Close()
@@ -116,10 +112,6 @@ public class PauseController : MonoBehaviour
 
     public void Save()
     {
-        if(AllTimeInGame.AllTime >= TimeSave + 15f)
-        {
-            TimeSave = AllTimeInGame.AllTime;
-            IdentificatorSave.color = Color.green;
-        }
+        IdentificatorSave.color = Color.green;
     }
 }

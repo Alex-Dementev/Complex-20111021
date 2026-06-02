@@ -52,7 +52,7 @@ public class InventoryPanel : MonoBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
-            else if(!PauseController.IsActive)
+            else if(Time.timeScale != 0 && DestroyPreviewModels.Destroy == null)
             {
                 Closet.SetActive(false);
                 IsActive = true;
@@ -70,20 +70,17 @@ public class InventoryPanel : MonoBehaviour
 
     public void OpenCloset()
     {
-        if(IsDelay <= 0)
+        if(IsDelay <= 0 && Time.timeScale != 0 && DestroyPreviewModels.Destroy == null)
         {
             Closet.SetActive(true);
 
-            if(!PauseController.IsActive)
-            {
-                IsActive = true;
-                InventoryObject.SetActive(true);
-                InventoryAnimator.Play("OpenCloset");
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
+            IsActive = true;
+            InventoryObject.SetActive(true);
+            InventoryAnimator.Play("OpenCloset");
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
 
-                PauseController.Speed = 0;
-            }
+            PauseController.Speed = 0;
 
             IsDelay = 0.5f;
         }

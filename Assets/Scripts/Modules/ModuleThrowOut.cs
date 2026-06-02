@@ -45,7 +45,7 @@ public class ModuleThrowOut
             inv.ImageSlots[inv.CurrentSlot].color = new Color(0,0,0,0f);
 
             if(inv.Closet != null)
-                inv.Closet.Slots[inv.CurrentSlot - 24] = 0;
+                inv.Closet.Slots[inv.CurrentSlot - 28] = 0;
 
             inv.ClickToSlot(inv.CurrentSlot);
         }

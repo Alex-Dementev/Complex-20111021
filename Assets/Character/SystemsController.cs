@@ -77,9 +77,9 @@ public class SystemsController : MonoBehaviour
         Heals = Mathf.Clamp(Heals, 0, 100);
 
         if(HealsToSlider - Heals >= 50)
-            HealsToSlider = Mathf.MoveTowards(HealsToSlider, Heals, Time.deltaTime * 70);
+            HealsToSlider = Mathf.MoveTowards(HealsToSlider, Heals, Time.deltaTime * 110);
         else
-            HealsToSlider = Mathf.MoveTowards(HealsToSlider, Heals, Time.deltaTime * 35);
+            HealsToSlider = Mathf.MoveTowards(HealsToSlider, Heals, Time.deltaTime * 40);
             
         SliderHeals.value = HealsToSlider;
 

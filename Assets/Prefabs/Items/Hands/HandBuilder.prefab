@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 7680090716673280269}
   - component: {fileID: 119404963819173459}
   - component: {fileID: 6324275095041237797}
+  - component: {fileID: -3564719702640812613}
   m_Layer: 6
   m_Name: HandBuilder
   m_TagString: Object
@@ -179,3 +180,15 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-3564719702640812613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3164067494527285561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33f6ac37a37e7da4a8091fdd0e2383c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Builder

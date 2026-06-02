@@ -70,6 +70,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "СКМ",
+                    "type": "Button",
+                    "id": "732bb0c0-dddc-43e4-8e33-5ddcb6fa6a1b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Inventory",
                     "type": "Button",
                     "id": "db59a809-e308-4429-94a8-2a4a8ecda67f",
@@ -151,9 +160,36 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "QuickSlot7",
+                    "type": "Button",
+                    "id": "f0ce35be-c0ef-4228-95d4-6ad436c6f767",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Submit",
                     "type": "Button",
                     "id": "1b19094a-d229-4843-9d5b-19558f39b398",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ScrollMouse",
+                    "type": "Value",
+                    "id": "d5eeff39-4408-4510-8a3e-e0ed01797851",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "EscapePreviewMode",
+                    "type": "Button",
+                    "id": "34983932-b7b8-454f-9d05-ba00eb2dd74f",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -284,6 +320,17 @@
                 },
                 {
                     "name": "",
+                    "id": "ea79ea1d-ac15-4931-a2e1-276fd54430a0",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "СКМ",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "637bb187-abed-45e5-9ff9-1f0c7b97a467",
                     "path": "<Keyboard>/tab",
                     "interactions": "",
@@ -307,7 +354,18 @@
                 {
                     "name": "",
                     "id": "028e0173-367f-46f6-96ff-db50967a8142",
-                    "path": "<Keyboard>/b",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Spawn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7b0db579-6f52-4708-8de7-2b4633ddcd0a",
+                    "path": "<Keyboard>/enter",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -383,6 +441,17 @@
                 },
                 {
                     "name": "",
+                    "id": "dedf5fa7-1029-415d-b665-f6321a661eca",
+                    "path": "<Keyboard>/7",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QuickSlot7",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "6784137a-a6c5-47d5-b800-0fd467c6a677",
                     "path": "<Keyboard>/enter",
                     "interactions": "",
@@ -400,6 +469,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "Submit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6be1eea2-8827-45e6-898a-a3ea73e1f07a",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollMouse",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f9eee36-a4db-4112-9ee2-efb52093a875",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EscapePreviewMode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "adbfd0b9-e00b-4276-bbaf-364966a83866",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EscapePreviewMode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "50374d41-365a-449d-95c0-0d0fc7859f82",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EscapePreviewMode",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
