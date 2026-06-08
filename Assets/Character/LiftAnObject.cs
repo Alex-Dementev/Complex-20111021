@@ -47,10 +47,12 @@ public class LiftAnObject : MonoBehaviour
         if(LiftAction.triggered && IInteractable != null && !PauseController.IsActive && !InventoryPanel.IsActive)
         {
             IInteractable.LeftClick();
+            IInteractable = null;
         }
         if(DestroyAction.triggered && IInteractable != null && !PauseController.IsActive && !InventoryPanel.IsActive)
         {
             IInteractable.RightClick();
+            IInteractable = null;
         }
     }
     

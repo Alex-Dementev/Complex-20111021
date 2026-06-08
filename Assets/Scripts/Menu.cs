@@ -86,6 +86,9 @@ public class Menu : MonoBehaviour
         PlayerPrefs.DeleteKey("Heals" + WorldIndexDelete);
         PlayerPrefs.DeleteKey("RevivePosition" + WorldIndexDelete);
         PlayerPrefs.DeleteKey("InventorySlots" + WorldIndexDelete);
+        PlayerPrefs.DeleteKey("MinusVisibility" + WorldIndexDelete);
+        PlayerPrefs.DeleteKey("DelayFastMinusVisibility" + WorldIndexDelete);
+        PlayerPrefs.DeleteKey("Visibility" + WorldIndexDelete);
 
 
         StartText[WorldIndexDelete].text = "Начать";

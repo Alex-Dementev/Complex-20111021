@@ -19,9 +19,16 @@ public class BuildManager : MonoBehaviour
 
     public static PreviewMode PreviewMode;
 
+    public static BuildManager Instance;
+
+    private bool ControlEnbaled = true;
+
 
     void Start()
     {
+        Instance = this;
+
+        
         var playerMap = inputActions.FindActionMap("Player");
         SpawnAction = playerMap.FindAction("Spawn");
         SpawnAction.Enable();
@@ -29,7 +36,10 @@ public class BuildManager : MonoBehaviour
 
     void Update()
     {
-        if (previewObject == null || Time.timeScale == 0) return;
+        if(previewObject == null)
+            ControlEnbaled = true;
+
+        if (previewObject == null || Time.timeScale == 0 || !ControlEnbaled) return;
 
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
@@ -42,17 +52,25 @@ public class BuildManager : MonoBehaviour
 
             if(SpawnAction.triggered)
             {
-                Spawn.Type = ChoiceOfBuilding.Current;
-                Spawn.TransformObject = previewObject.transform;
-
-                Spawn.SpawnObject();
-
-                DestroyPreviewModels.Destroy?.Invoke();
+                DestroyPreviewModels.Destroy?.Invoke(true);
+                ControlEnbaled = false;
             }
         }
         else
         {
             previewObject.gameObject.SetActive(false);
         }
+    }
+
+    public void Build()
+    {
+        Spawn.Type = ChoiceOfBuilding.Current;
+        Spawn.TransformObject = previewObject.transform;
+
+        Spawn.SpawnObject();
+
+        DestroyPreviewModels.Destroy?.Invoke(false);
+
+        ControlEnbaled = true;
     }
 }

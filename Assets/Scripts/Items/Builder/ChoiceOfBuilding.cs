@@ -61,7 +61,7 @@ public class ChoiceOfBuilding : MonoBehaviour
 
         if(EscapePreviewModeAction.triggered && InventorySlots.Instance.IndexSlots[0] == BuilderID)
         {
-            DestroyPreviewModels.Destroy?.Invoke();
+            DestroyPreviewModels.Destroy?.Invoke(false);
 
             Open();
         }
@@ -153,6 +153,9 @@ public class ChoiceOfBuilding : MonoBehaviour
 
     public void Open()
     {
+        if(DestroyPreviewModels.Destroy.GetInvocationList().Length != 1)
+            return;
+
         Panel.SetActive(true);
         PanelAnimator.CrossFade("Open", 0.1f);
         IsActive = true;

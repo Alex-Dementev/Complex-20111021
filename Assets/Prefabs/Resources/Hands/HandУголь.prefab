@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7680090716673280269}
   - component: {fileID: 119404963819173459}
   - component: {fileID: 6324275095041237797}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: "Hand\u0423\u0433\u043E\u043B\u044C"
   m_TagString: Untagged
   m_Icon: {fileID: 0}

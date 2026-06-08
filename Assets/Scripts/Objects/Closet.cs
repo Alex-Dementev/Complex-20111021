@@ -8,7 +8,6 @@ public class Closet : MonoBehaviour, IInteractable
     public bool Spawned;
     public int ClosetType;
     public int ID;
-    public InventoryPanel InventoryPanel;
     private bool OnSave;
     private bool Load;
     [HideInInspector]public string Name;
@@ -30,7 +29,7 @@ public class Closet : MonoBehaviour, IInteractable
 
         if(!Spawned)
         {
-            if(CenterSpawnedObjects.Instance.ResourcesID[ID + 12000] == 1)
+            if(CenterSpawnedObjects.Instance.ResourcesID[ID + CenterSpawnedObjects.IDSpawnedObjects] == 1)
             {
                 Destroy(gameObject);
 
@@ -61,8 +60,8 @@ public class Closet : MonoBehaviour, IInteractable
                 Slots[i] = CenterSpawnedObjects.Instance.ResourcesItems[ID][i];
             }
 
-            CenterSpawnedObjects.Instance.ResourcesPositions[ID + 12000] = transform.position;
-            CenterSpawnedObjects.Instance.ResourcesRotations[ID + 12000] = transform.eulerAngles;
+            CenterSpawnedObjects.Instance.ResourcesPositions[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.position;
+            CenterSpawnedObjects.Instance.ResourcesRotations[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.eulerAngles;
         }
         else
         {
@@ -110,10 +109,10 @@ public class Closet : MonoBehaviour, IInteractable
 
         CenterSpawnedObjects.Instance.ResourcesNames[ID] = Name;
 
-        CenterSpawnedObjects.Instance.ResourcesPositions[ID + 12000] = transform.position;
-        CenterSpawnedObjects.Instance.ResourcesRotations[ID + 12000] = transform.eulerAngles;
+        CenterSpawnedObjects.Instance.ResourcesPositions[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.position;
+        CenterSpawnedObjects.Instance.ResourcesRotations[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.eulerAngles;
 
-        CenterSpawnedObjects.Instance.ResourcesTypes[ID + 12000] = ClosetType;
+        CenterSpawnedObjects.Instance.ResourcesTypes[ID + CenterSpawnedObjects.IDSpawnedObjects] = ClosetType;
 
         if (CenterSpawnedObjects.Instance.ResourcesItems[ID] == null || CenterSpawnedObjects.Instance.ResourcesItems[ID].Length != Slots.Length)
         {
@@ -128,10 +127,14 @@ public class Closet : MonoBehaviour, IInteractable
 
     public void RightClick()
     {
-        if(boolDestroy || Time.timeScale != 1 || DestroyPreviewModels.Destroy != null || StartDelay > 0)
+        if(boolDestroy || Time.timeScale != 1 || StartDelay > 0)
             return;
 
-        boolDestroy = true;
+        if(DestroyPreviewModels.Destroy != null)
+        {
+            if(DestroyPreviewModels.Destroy.GetInvocationList().Length >= 2)
+                return;
+        }
 
 
         if(Time.timeScale == 0)
@@ -146,6 +149,9 @@ public class Closet : MonoBehaviour, IInteractable
                 return;
             }
         }
+
+
+        boolDestroy = true;
 
         
         string[] Resources1 = AllID.BuildResource1[ClosetType].Split('|');
@@ -190,13 +196,13 @@ public class Closet : MonoBehaviour, IInteractable
 
 
         if(Spawned)
-            CenterSpawnedObjects.Instance.ResourcesID[ID + 12000] = 0;
+            CenterSpawnedObjects.Instance.ResourcesID[ID + CenterSpawnedObjects.IDSpawnedObjects] = 0;
         else
-            CenterSpawnedObjects.Instance.ResourcesID[ID + 12000] = 1;
+            CenterSpawnedObjects.Instance.ResourcesID[ID + CenterSpawnedObjects.IDSpawnedObjects] = 1;
 
-        CenterSpawnedObjects.Instance.ResourcesPositions[ID + 12000] = new Vector3(0, 0, 0);
-        CenterSpawnedObjects.Instance.ResourcesRotations[ID + 12000] = new Vector3(0, 0, 0);
-        CenterSpawnedObjects.Instance.ResourcesTypes[ID + 12000] = 0;
+        CenterSpawnedObjects.Instance.ResourcesPositions[ID + CenterSpawnedObjects.IDSpawnedObjects] = new Vector3(0, 0, 0);
+        CenterSpawnedObjects.Instance.ResourcesRotations[ID + CenterSpawnedObjects.IDSpawnedObjects] = new Vector3(0, 0, 0);
+        CenterSpawnedObjects.Instance.ResourcesTypes[ID + CenterSpawnedObjects.IDSpawnedObjects] = 0;
 
         CenterSpawnedObjects.Instance.ResourcesNames[ID] = null;
         CenterSpawnedObjects.Instance.ResourcesItems[ID] = null;
@@ -211,8 +217,14 @@ public class Closet : MonoBehaviour, IInteractable
 
     public void LeftClick()
     {
-        if(boolDestroy || Time.timeScale != 1 || DestroyPreviewModels.Destroy != null || StartDelay > 0)
+        if(boolDestroy || Time.timeScale != 1 || StartDelay > 0 || (DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) >= 2)
             return;
+
+        if(DestroyPreviewModels.Destroy != null)
+        {
+            if(DestroyPreviewModels.Destroy.GetInvocationList().Length >= 2)
+                return;
+        }
         
         InventoryPanel.Instance.OpenCloset();
         InventorySlots.Instance.Closet = this;

@@ -3,25 +3,51 @@ using UnityEngine.UI;
 
 public class SystemsController : MonoBehaviour
 {
+    [Header("Oxygen")]
     private float Oxygen;
     public Slider SliderOxygen;
-    public Slider SliderHeals;
-    private CapsuleCollider capsule;
     public Animator AnimatorZeroOxygen;
-    public Animator AnimatorZeroHeals;
-    public Animator AnimatorBlackScreen;
     private bool ZeroOxygen;
-    private bool ZeroHeals;
-    private bool Death;
-    public static int Heals = 100;
-    public float HealsToSlider = 100;
     public float MinusOxygen;
-    public CharacterContorller CharacterContorller;
+    private bool InAOxygen;
 
+    [Header("Heals")]
+    public Slider SliderHeals;
+    public Animator AnimatorZeroHeals;
+    private bool ZeroHeals;
+    public int Heals = 100;
+    public float HealsToSlider = 100;
+
+    [Header("Visibility")]
+    public Slider SliderVisibility;
+    public Animator AnimatorVisibility;
+    public float Visibility = 0;
+    private float OldVisibility = 0;
+    public float VisibilityToSlider = 0;
+    private float MinusVisibility;
+    private float DelayFastMinusVisibility = 2;
+
+    public Animator AnimatorBlackScreen;
+    private bool Death;
+
+
+
+    private void OnEnable()
+    {
+        Systems.Oxygen += SetOxygen;
+        Systems.Visibility += ApplyVisibity;
+        Systems.Heals += ApplyDamage;
+        Systems.InAOxygen += VoidInAOxygen;
+    }
+    private void OnDisable()
+    {
+        Systems.Oxygen -= SetOxygen;
+        Systems.Visibility -= ApplyVisibity;
+        Systems.Heals -= ApplyDamage;
+        Systems.InAOxygen -= VoidInAOxygen;
+    }
     void Start()
     {
-        capsule = GetComponent<CapsuleCollider>();
-        
         if(PlayerPrefs.HasKey("Oxygen" + PlayerPrefs.GetInt("WorldIndex", 0)))
             Oxygen = PlayerPrefs.GetFloat("Oxygen" + PlayerPrefs.GetInt("WorldIndex", 0));
         else
@@ -35,12 +61,32 @@ public class SystemsController : MonoBehaviour
         else
             Heals = 100;
 
-        SliderOxygen.maxValue = 35;
+        if(PlayerPrefs.HasKey("Visibility" + PlayerPrefs.GetInt("WorldIndex", 0)))
+        {
+            Visibility = PlayerPrefs.GetFloat("Visibility" + PlayerPrefs.GetInt("WorldIndex", 0), 0);
+            DelayFastMinusVisibility = PlayerPrefs.GetFloat("DelayFastMinusVisibility" + PlayerPrefs.GetInt("WorldIndex"), 1);
+            MinusVisibility = PlayerPrefs.GetFloat("MinusVisibility" + PlayerPrefs.GetInt("WorldIndex"), 0.065f);
+        }
+        else
+        {
+            Visibility = 0;
+            DelayFastMinusVisibility = 2;
+            MinusVisibility = 0.065f;
+        }
     }
 
     void Update()
     {
-        if (InAOxygen())
+        UpdateOxygen();
+        UpdateHeals();
+        UpdateVisibility();
+    }
+
+
+
+    private void UpdateOxygen()
+    {
+        if (InAOxygen)
         {
             Oxygen += 1.2f * Time.deltaTime;
 
@@ -52,7 +98,7 @@ public class SystemsController : MonoBehaviour
         }
         else
         {
-            Oxygen -= 1f * Time.deltaTime;
+            Oxygen -= MinusOxygen * Time.deltaTime;
 
             if(Oxygen <= 15 && !ZeroOxygen)
             {
@@ -74,6 +120,11 @@ public class SystemsController : MonoBehaviour
 
         Oxygen = Mathf.Clamp(Oxygen, 0, SliderOxygen.maxValue);
 
+        SliderOxygen.value = Oxygen;
+    }
+
+    private void UpdateHeals()
+    {
         Heals = Mathf.Clamp(Heals, 0, 100);
 
         if(HealsToSlider - Heals >= 50)
@@ -83,22 +134,10 @@ public class SystemsController : MonoBehaviour
             
         SliderHeals.value = HealsToSlider;
 
-        SliderOxygen.value = Oxygen;
-
         if(Heals <= 0f && !Death)
         {
             Death = true;
             AnimatorBlackScreen.Play("Death");
-        }
-
-        if(CharacterContorller.Swim)
-            MinusOxygen = 1.3f;
-        else
-        {
-            if(CharacterContorller.isSprinting)
-                MinusOxygen = 1.52f;
-            else
-                MinusOxygen = 1f;
         }
 
         if(Heals <= 30 && !ZeroHeals)
@@ -113,29 +152,50 @@ public class SystemsController : MonoBehaviour
         }
     }
 
-    bool InAOxygen()
+    private void UpdateVisibility()
     {
-        Vector3 point1 = transform.position + Vector3.up * (capsule.height / 2f - capsule.radius);
-        Vector3 point2 = transform.position - Vector3.up * (capsule.height / 2f - capsule.radius);
+        DelayFastMinusVisibility -= Time.deltaTime;
+        
+        if(DelayFastMinusVisibility <= 0) MinusVisibility = Mathf.MoveTowards(MinusVisibility, 0.3f, Time.deltaTime * 0.1f);
+        else MinusVisibility = Mathf.MoveTowards(MinusVisibility, 0.065f, Time.deltaTime * 0.2f);
 
-        return Physics.CheckCapsule(point1, point2, capsule.radius, LayerMask.GetMask("Oxygen"));
+        Visibility = Visibility - MinusVisibility * Time.deltaTime;
+        Visibility = Mathf.Clamp(Visibility, 0, 100);
+        
+        VisibilityToSlider = Mathf.MoveTowards(VisibilityToSlider, Visibility, Time.deltaTime);
+        SliderVisibility.value = VisibilityToSlider;
     }
 
-    private void OnCollisionEnter(Collision collision)
+
+
+    private void ApplyDamage(int vDamage = 0)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Damage"))
-        {
-            Heals -= 5;
-        }
+        Heals -= vDamage;
+        Heals = Mathf.Clamp(Heals, 0, 100);
     }
-
-
+    private void ApplyVisibity(float vVisibility = 0)
+    {
+        Visibility += vVisibility;
+        Visibility = Mathf.Clamp(Visibility, 0, 100);
+        DelayFastMinusVisibility = 2;
+    }
+    private void SetOxygen(float vOxygen = 0)
+    {
+        MinusOxygen = vOxygen;
+    }
+    private void VoidInAOxygen(bool vInAOxygen)
+    {
+        InAOxygen = vInAOxygen;
+    }
 
 
     public void Save()
     {
         PlayerPrefs.SetFloat("Oxygen" + PlayerPrefs.GetInt("WorldIndex", 0), Oxygen);
         PlayerPrefs.SetInt("Heals" + PlayerPrefs.GetInt("WorldIndex", 0), Heals);
+        PlayerPrefs.SetFloat("MinusVisibility" + PlayerPrefs.GetInt("WorldIndex", 0), MinusVisibility);
+        PlayerPrefs.SetFloat("Visibility" + PlayerPrefs.GetInt("WorldIndex", 0), Visibility);
+        PlayerPrefs.SetFloat("DelayFastMinusVisibility" + PlayerPrefs.GetInt("WorldIndex", 0), DelayFastMinusVisibility);
     }
 
     public void Revive()
@@ -144,4 +204,13 @@ public class SystemsController : MonoBehaviour
         Heals = 65;
         Oxygen = SliderOxygen.maxValue;
     }
+}
+
+
+public static class Systems
+{
+    public static System.Action<float> Visibility = null;
+    public static System.Action<float> Oxygen = null;
+    public static System.Action<int> Heals = null;
+    public static System.Action<bool> InAOxygen = null;
 }

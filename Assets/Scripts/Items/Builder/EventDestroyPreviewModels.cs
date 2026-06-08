@@ -1,4 +1,4 @@
 public static class DestroyPreviewModels
 {
-    public static System.Action Destroy;
+    public static System.Action<bool> Destroy = null;
 }

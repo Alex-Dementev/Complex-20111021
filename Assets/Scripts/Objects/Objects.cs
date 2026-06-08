@@ -10,10 +10,13 @@ public class Objects : MonoBehaviour, IInteractable
     private bool Saved;
     private bool Load;
     private bool Reised;
+    private Rigidbody rb;
 
 
     void Start()
     {
+        rb = GetComponent<Rigidbody>();
+        
         Name = AllID.Names[ID];
     }
 
@@ -34,6 +37,18 @@ public class Objects : MonoBehaviour, IInteractable
             else if(!PauseController.InvisibleOperations)
                 Saved = false;
         }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.layer == LayerMask.NameToLayer("Water"))
+            rb.linearDamping = 8f;
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if(other.gameObject.layer == LayerMask.NameToLayer("Water"))
+            rb.linearDamping = 0f;
     }
 
     public void LeftClick()

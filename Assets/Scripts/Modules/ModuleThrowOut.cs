@@ -21,7 +21,7 @@ public class ModuleThrowOut
 
             int objectID = -1;
 
-            for(int i = 4500; i < 12000; i++)
+            for(int i = CenterSpawnedObjects.IDNotSpawnedObjects; i < CenterSpawnedObjects.IDSpawnedObjects; i++)
             {
                 if(CenterSpawnedObjects.Instance.ResourcesID[i] == 0)
                 {
@@ -57,7 +57,7 @@ public class ModuleThrowOut
 
             int objectID = -1;
 
-            for(int i = 4500; i < 12000; i++)
+            for(int i = CenterSpawnedObjects.IDNotSpawnedObjects; i < CenterSpawnedObjects.IDSpawnedObjects; i++)
             {
                 if(CenterSpawnedObjects.Instance.ResourcesID[i] == 0)
                 {
@@ -106,7 +106,7 @@ public class ModuleThrowOut
 
         int objectID = -1;
 
-        for(int i = 4500; i < 12000; i++)
+        for(int i = CenterSpawnedObjects.IDNotSpawnedObjects; i < CenterSpawnedObjects.IDSpawnedObjects; i++)
         {
             if(CenterSpawnedObjects.Instance.ResourcesID[i] == 0)
             {

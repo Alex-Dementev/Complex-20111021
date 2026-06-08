@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4293916516543871267}
   - component: {fileID: 2110608662829488307}
   - component: {fileID: 8373930606904642689}
-  m_Layer: 6
+  m_Layer: 11
   m_Name: 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,8 @@ GameObject:
   - component: {fileID: 119404963819173459}
   - component: {fileID: 6324275095041237797}
   - component: {fileID: -3564719702640812613}
-  m_Layer: 6
+  - component: {fileID: 2948458258193477848}
+  m_Layer: 11
   m_Name: HandBuilder
   m_TagString: Object
   m_Icon: {fileID: 0}
@@ -117,8 +118,8 @@ Transform:
   m_GameObject: {fileID: 3164067494527285561}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.007, z: -0.014}
-  m_LocalScale: {x: 0.1, y: 0.3, z: 0.1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.10000002, y: 0.3, z: 0.10000002}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4293916516543871267}
@@ -192,3 +193,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33f6ac37a37e7da4a8091fdd0e2383c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Builder
+  Animator: {fileID: 2948458258193477848}
+--- !u!95 &2948458258193477848
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3164067494527285561}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0ddbd640fcfb5404d9734ea2b02e008d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

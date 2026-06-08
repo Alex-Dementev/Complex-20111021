@@ -76,6 +76,7 @@ public class CharacterContorller : MonoBehaviour
     private float xRotation = 0f;
     private bool isGrounded;
     public bool isSprinting;
+    private bool OldSwim;
 
     public Vector3 RevivePosition;
 
@@ -145,12 +146,14 @@ public class CharacterContorller : MonoBehaviour
         {
             float extraVertical = verticalSpeed - 8f;
             totalDamage += Mathf.RoundToInt(extraVertical * 3f); 
+            Systems.Visibility?.Invoke(0.1f);
 
             if(verticalSpeed > 13)
             {
                 extraVertical = verticalSpeed - 5f;
                 totalDamage += Mathf.RoundToInt(extraVertical * 5f); 
                 Debug.Log("Высокое падение " + verticalSpeed);
+                Systems.Visibility?.Invoke(0.2f);
             }
             else
                 Debug.Log("Падение " + verticalSpeed);
@@ -164,7 +167,13 @@ public class CharacterContorller : MonoBehaviour
         }
 
         if(totalDamage > 0)
-            SystemsController.Heals = SystemsController.Heals - totalDamage;
+            Systems.Heals?.Invoke(totalDamage);
+
+
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Damage"))
+        {
+            Systems.Heals?.Invoke(5);
+        }
     }
 
     void Update()
@@ -187,6 +196,9 @@ public class CharacterContorller : MonoBehaviour
 
         bool inWater = IsTouchingWater();
 
+        if(inWater != Swim)
+            Systems.Visibility?.Invoke(0.25f * Time.deltaTime);
+
         if (inWater)
         {
             Swim = true;
@@ -196,6 +208,13 @@ public class CharacterContorller : MonoBehaviour
 
             if (waterExitCooldownTimer > 0f)
                 waterExitCooldownTimer -= Time.deltaTime;
+
+            if(OldSwim != Swim)
+            {
+                OldSwim = Swim;
+                AudioManager.Instance.PlaySound(0);
+                AudioManager.Instance.PlayBiomeSound(0, false);
+            }
         }
         else
         {
@@ -205,7 +224,38 @@ public class CharacterContorller : MonoBehaviour
             RenderSettings.fogColor = new Color(0f/255, 0f/255, 0f/255);
 
             waterExitCooldownTimer = 2f;
+
+            if(OldSwim != Swim)
+            {
+                OldSwim = Swim;
+                AudioManager.Instance.PlaySound(1);
+                AudioManager.Instance.PlayBiomeSound(0, true);
+            }
         }
+
+        
+        if(currentSpeed >= 1f || Swim)
+        {
+            if(Swim)
+            {
+                Systems.Oxygen?.Invoke(1.3f);
+                Systems.Visibility?.Invoke(0.06f * Time.deltaTime);
+            }
+            
+            if(isSprinting && !Swim)
+            {
+                Systems.Visibility?.Invoke(0.12f * Time.deltaTime);
+                Systems.Oxygen?.Invoke(1.4f);
+            }
+            else if(!Swim)
+            {
+                Systems.Visibility?.Invoke(0.06f * Time.deltaTime);
+                Systems.Oxygen?.Invoke(1f);
+            }
+        }
+        else Systems.Oxygen?.Invoke(1f);
+
+        Systems.InAOxygen?.Invoke(InAOxygen());
     }
 
     void FixedUpdate()
@@ -362,9 +412,9 @@ public class CharacterContorller : MonoBehaviour
 
     void UpdateAnimation()
     {
-        if (Swim) { animator.SetInteger("Speed", rb.linearVelocity.magnitude > 0.2f ? 1 : 0); return; }
+        if (Swim) {animator.SetInteger("Speed", 0); return;}
         if (!isGrounded) { animator.SetInteger("Speed", 0); return; }
-        if (currentSpeed < 0.1f) animator.SetInteger("Speed", 0);
+        if (currentSpeed < 2f) animator.SetInteger("Speed", 0);
         else if (isSprinting) animator.SetInteger("Speed", 2);
         else animator.SetInteger("Speed", 1);
     }
@@ -410,6 +460,16 @@ public class CharacterContorller : MonoBehaviour
                        
         PlayerPrefs.SetString("playerData" + PlayerPrefs.GetInt("WorldIndex", 0), value);
     }
+
+
+    public bool InAOxygen()
+    {
+        Vector3 point1 = transform.position + Vector3.up * (capsule.height / 2f - capsule.radius);
+        Vector3 point2 = transform.position - Vector3.up * (capsule.height / 2f - capsule.radius);
+
+        return Physics.CheckCapsule(point1, point2, capsule.radius, LayerMask.GetMask("Oxygen"));
+    }
+
 
     public void Revive()
     {

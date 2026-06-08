@@ -5,14 +5,27 @@ using System.Globalization;
 
 public class CenterSpawnedObjects : MonoBehaviour
 {
+    public static CenterSpawnedObjects Instance;
+
+
+    public const int IDNotSpawnedObjects = 4500;
+    public const int IDSpawnedObjects = 12000;
+    public const int IDNotSpawnedBuilds = 13000;
+    public const int IDSpawnedBuilds = 17000;
+
+
     public int[] ResourcesID = new int[17000];
     public Vector3[] ResourcesPositions = new Vector3[17000];
     public Vector3[] ResourcesRotations = new Vector3[17000];
     public int[] ResourcesTypes = new int[17000];
     public int[][] ResourcesItems = new int[5000][];
     public string[] ResourcesNames = new string[5000];
-    public static CenterSpawnedObjects Instance;
+
+
     public static bool Load;
+
+
+    
 
     void Start()
     {

@@ -7,7 +7,7 @@ public class PauseController : MonoBehaviour
 {
     private InputAction PauseAction;
     public Animator PauseAnimator;
-    public static bool IsActive;
+    public static bool IsActive = false;
     private float IsDelay;
     public GameObject PauseObject;
     public InputActionAsset inputActions;
@@ -19,18 +19,10 @@ public class PauseController : MonoBehaviour
     public AllTimeInGame AllTimeInGame;
     public static bool InvisibleOperations;
     public Button SaveButton;
+    private float OldMouseSentensivity;
 
     void Update()
     {
-        var State = PauseAnimator.GetCurrentAnimatorStateInfo(0);
-        if(!InvisibleOperations && State.IsName("Open") && State.normalizedTime >= 0.85f && Speed <= 0.05f && IsActive)
-        {
-            InvisibleOperations = true;
-            System.GC.Collect();
-            Debug.Log("Очистка оперативной памяти и сохранение данных в массивы");
-            SaveButton.interactable = true;
-        }
-
         IsDelay -= Time.unscaledDeltaTime;
 
         if (PauseAction.triggered)
@@ -42,6 +34,7 @@ public class PauseController : MonoBehaviour
                     IsActive = false;
                     InvisibleOperations = false;
                     PauseAnimator.Play("Close");
+                    AudioManager.Instance.PauseContinue(true);
 
                     if(!InventoryPanel.Instance.IsActive)
                     {
@@ -50,13 +43,16 @@ public class PauseController : MonoBehaviour
                         Cursor.visible = false;
                     }
                 }
-                else if(DestroyPreviewModels.Destroy == null)
+                else if((DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) <= 1)
                 {
+
+
                     PauseObject.SetActive(true);
                     IsActive = true;
                     PauseAnimator.Play("Open");
                     SaveButton.interactable = false;
                     IdentificatorSave.color = Color.red;
+                    AudioManager.Instance.PauseContinue(false);
 
                     Speed = 0;
 
@@ -70,9 +66,25 @@ public class PauseController : MonoBehaviour
 
         Time.timeScale = Mathf.MoveTowards(Time.timeScale, Speed, Time.unscaledDeltaTime * 2.5f);
 
-
         MouseSensitivity = SliderSensitivity.value;
-        PlayerPrefs.SetFloat("Sensitivity", MouseSensitivity);
+
+        if(OldMouseSentensivity != MouseSensitivity)
+        {
+            OldMouseSentensivity = MouseSensitivity;
+            PlayerPrefs.SetFloat("Sensitivity", MouseSensitivity);
+        }
+
+        if(IsActive)
+        {
+            var State = PauseAnimator.GetCurrentAnimatorStateInfo(0);
+            if(!InvisibleOperations && State.IsName("Open") && State.normalizedTime >= 0.85f && Speed <= 0.05f && IsActive)
+            {
+                InvisibleOperations = true;
+                System.GC.Collect();
+                Debug.Log("Очистка оперативной памяти и сохранение данных в массивы");
+                SaveButton.interactable = true;
+            }
+        }
     }
 
     void Start()
@@ -86,6 +98,7 @@ public class PauseController : MonoBehaviour
         PauseAction.Enable();
 
         MouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 3);
+        OldMouseSentensivity = MouseSensitivity;
         SliderSensitivity.value = MouseSensitivity;
     }
 
@@ -94,6 +107,7 @@ public class PauseController : MonoBehaviour
         if(IsActive)
         {
             PauseAnimator.Play("Close");
+            AudioManager.Instance.PauseContinue(false);
 
             if(!InventoryPanel.Instance.IsActive)
                 Speed = 1;

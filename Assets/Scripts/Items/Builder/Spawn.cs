@@ -88,11 +88,11 @@ public class Spawn : MonoBehaviour
         var obj = Instantiate(AllID.BuildPrefab[Type], TransformObject.position, TransformObject.rotation);
 
 
-        for (int i = 13000; i < CenterSpawnedObjects.Instance.ResourcesID.Length; i++)
+        for (int i = CenterSpawnedObjects.IDNotSpawnedBuilds; i < CenterSpawnedObjects.IDSpawnedBuilds; i++)
         {
             if (CenterSpawnedObjects.Instance.ResourcesID[i] == 0)
             {
-                ObjectID = -12000 + i;
+                ObjectID = i - CenterSpawnedObjects.IDSpawnedObjects;
                 CenterSpawnedObjects.Instance.ResourcesID[i] = 1;
                 CenterSpawnedObjects.Instance.ResourcesTypes[i] = Type;
                 break;

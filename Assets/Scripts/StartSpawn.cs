@@ -17,7 +17,7 @@ public class StartSpawn : MonoBehaviour
     {
         Load = true;
         
-        for(int i = 4500; i < 12000; i++)
+        for(int i = CenterSpawnedObjects.IDNotSpawnedObjects; i < CenterSpawnedObjects.IDSpawnedObjects; i++)
         {
             if(CenterSpawnedObjects.Instance.ResourcesID[i] == 1)
             {
@@ -30,21 +30,21 @@ public class StartSpawn : MonoBehaviour
             }
         }
 
-        for(int i = 13000; i < CenterSpawnedObjects.Instance.ResourcesID.Length; i++)
+        for(int i = CenterSpawnedObjects.IDNotSpawnedBuilds; i < CenterSpawnedObjects.IDSpawnedBuilds; i++)
         {
             if(CenterSpawnedObjects.Instance.ResourcesID[i] == 1)
             {
                 Closet closet = Instantiate(ClosetPrefabs[CenterSpawnedObjects.Instance.ResourcesTypes[i]], CenterSpawnedObjects.Instance.ResourcesPositions[i], Quaternion.Euler(CenterSpawnedObjects.Instance.ResourcesRotations[i])).GetComponent<Closet>();
 
                 closet.Spawned = true;
-                closet.ID = i - 12000;
+                closet.ID = i - CenterSpawnedObjects.IDSpawnedObjects;
                 closet.ClosetType = CenterSpawnedObjects.Instance.ResourcesTypes[i];
-                closet.TotalSlots = CenterSpawnedObjects.Instance.ResourcesItems[i - 12000].Length;
+                closet.TotalSlots = CenterSpawnedObjects.Instance.ResourcesItems[i - CenterSpawnedObjects.IDSpawnedObjects].Length;
                 closet.Slots = new int[closet.TotalSlots];
 
                 for(int j = 0; j < closet.TotalSlots; j++)
                 {
-                    closet.Slots[j] = CenterSpawnedObjects.Instance.ResourcesItems[i - 12000][j];
+                    closet.Slots[j] = CenterSpawnedObjects.Instance.ResourcesItems[i - CenterSpawnedObjects.IDSpawnedObjects][j];
                 }
             }
         }

@@ -37,12 +37,18 @@ public class PreviewMode : MonoBehaviour
         DestroyPreviewModels.Destroy += VoidDestroy;
     }
 
-    private void VoidDestroy()
+    private void VoidDestroy(bool Build)
     {
+        if(Build)
+            return;
+
+
         DestroyPreviewModels.Destroy -= VoidDestroy;
 
         Destroy(gameObject);
     }
+
+    private void OnDisable(){DestroyPreviewModels.Destroy -= VoidDestroy;}
 
     private void FixedUpdate()
     {
