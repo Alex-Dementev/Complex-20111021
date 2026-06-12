@@ -14,6 +14,7 @@ public class InventorySlots : MonoBehaviour
     public int TotalSlots = 5;
     public int TotalClosetSlots = 5;
     public int[] IndexSlots;
+    public float[] SettingsSlots;
     public GameObject[] Slots;
     public Image[] SlotsAllocations;
     public Text Name;
@@ -40,7 +41,8 @@ public class InventorySlots : MonoBehaviour
     private void Start()
     {
         TotalSlots = 7;
-        IndexSlots = new int[53];
+        IndexSlots = new int[55];
+        SettingsSlots = new float[55];
 
         ModuleThrowOut = new ModuleThrowOut();
 
@@ -54,14 +56,22 @@ public class InventorySlots : MonoBehaviour
         
 
         string data = PlayerPrefs.GetString("InventorySlots" + PlayerPrefs.GetInt("WorldIndex", 0), "");
-        string[] split = data.Split('|');
+        string[] split1 = data.Split('|');
+        data = PlayerPrefs.GetString("InventorySettingsSlots" + PlayerPrefs.GetInt("WorldIndex", 0), "");
+        string[] split2 = data.Split('|');
 
-        for (int i = 0; i < TotalSlots; i++)
+        for (int i = 0; i < 55; i++)
         {
-            if (i < split.Length && split[i] != "")
-                IndexSlots[i] = int.Parse(split[i]);
+            if (i < split1.Length && split1[i] != "")
+            {
+                IndexSlots[i] = int.Parse(split1[i]);
+                SettingsSlots[i] = int.Parse(split2[i]);
+            }
             else
+            {
                 IndexSlots[i] = 0;
+                SettingsSlots[i] = 0;
+            }
         }
 
 
@@ -90,7 +100,7 @@ public class InventorySlots : MonoBehaviour
         if(ThrowOutAction.triggered)
             ThrowOut();
 
-        for(int i = 0; i < ImageSlots.Length; i++)
+        for(int i = 0; i < 55; i++)
         {
             if(ImageSlots[i] != null && ImageSlots[i].sprite != AllID.Sprites[IndexSlots[i]])
             {
@@ -140,6 +150,7 @@ public class InventorySlots : MonoBehaviour
             for (int i = 0; i < Closet.Slots.Length; i++)
             {
                 IndexSlots[28 + i] = Closet.Slots[i];
+                SettingsSlots[28 + i] = Closet.Settings[i];
             }
         }
         else
@@ -155,6 +166,9 @@ public class InventorySlots : MonoBehaviour
             int tempID = IndexSlots[0];
             IndexSlots[0] = IndexSlots[Index];
             IndexSlots[Index] = tempID;
+            float tempIDfloat = SettingsSlots[0];
+            SettingsSlots[0] = SettingsSlots[Index];
+            SettingsSlots[Index] = tempIDfloat;
 
             return;
         }
@@ -169,7 +183,10 @@ public class InventorySlots : MonoBehaviour
                     {
                         IndexSlots[i] = IndexSlots[Index];
                         IndexSlots[Index] = 0;
+                        SettingsSlots[i] = SettingsSlots[Index];
+                        SettingsSlots[Index] = 0;
                         Closet.Slots[i - 28] = IndexSlots[i];
+                        Closet.Settings[i - 28] = SettingsSlots[i];
                         Closet.UpdateCloset();
 
                         return;
@@ -184,6 +201,8 @@ public class InventorySlots : MonoBehaviour
                     {
                         IndexSlots[i] = IndexSlots[Index];
                         IndexSlots[Index] = 0;
+                        SettingsSlots[i] = SettingsSlots[Index];
+                        SettingsSlots[Index] = 0;
                         Closet.Slots[Index - 28] = 0;
                         Closet.UpdateCloset();
 
@@ -198,24 +217,67 @@ public class InventorySlots : MonoBehaviour
 
         if (CurrentSlot != -1 && Index != PreviousSlot)
         {
+            if(Index == 52 || PreviousSlot == 52)
+            {
+                if(IndexSlots[Index] != 0)
+                {
+                    if(IndexSlots[Index] < AllID.Ballons || IndexSlots[Index] > AllID.Backpack)
+                    {
+                        UnSelect();
+
+                        return;
+                    }
+                }
+                else if(PreviousSlot != 0)
+                {
+                    if(IndexSlots[PreviousSlot] < AllID.Ballons || IndexSlots[PreviousSlot] > AllID.Backpack)
+                    {
+                        UnSelect();
+                        
+                        return;
+                    }
+                }
+            }
+            if(Index >= 53 || PreviousSlot >= 53)
+            {
+                if(IndexSlots[Index] != 0)
+                {
+                    if(IndexSlots[Index] < AllID.Items || IndexSlots[Index] > AllID.Ballons)
+                    {
+                        UnSelect();
+                        
+                        return;
+                    }
+                }
+                else if(PreviousSlot != 0)
+                {
+                    if(IndexSlots[PreviousSlot] < AllID.Items || IndexSlots[PreviousSlot] > AllID.Ballons)
+                    {
+                        UnSelect();
+                        
+                        return;
+                    }
+                }
+            }
+
             int tempID = IndexSlots[PreviousSlot];
             IndexSlots[PreviousSlot] = IndexSlots[Index];
             IndexSlots[Index] = tempID;
+            float tempIDfloat = SettingsSlots[PreviousSlot];
+            SettingsSlots[PreviousSlot] = SettingsSlots[Index];
+            SettingsSlots[Index] = tempIDfloat;
 
             SlotsAllocations[CurrentSlot].color = new Color(55f / 255f, 55f / 255f, 55f / 255f);
             SlotsAllocations[Index].color = new Color(55f / 255f, 55f / 255f, 55f / 255f);
 
-            CurrentSlot = -1;
-            PreviousSlot = -1;
-
-            Description.text = "";
-            Name.text = "";
+            UnSelect();
 
             if(Closet != null)
             {
                 for (int i = 0; i < Closet.TotalSlots; i++)
                 {
                     Closet.Slots[i] = IndexSlots[28 + i];
+                    Closet.Settings[i] = SettingsSlots[28 + i];
                 }
             }
         }
@@ -228,7 +290,11 @@ public class InventorySlots : MonoBehaviour
             {
                 SlotsAllocations[Index].color = new Color(85f/255f, 85f/255f, 85f/255f);
 
-                Description.text = AllID.Descriptions[IndexSlots[Index]];
+                if(AllID.Settings[IndexSlots[Index]] != 0)
+                    Description.text = AllID.Descriptions[IndexSlots[Index]] + ".\n" + AllID.SettingsStrings[IndexSlots[Index]] + ": " + (int)SettingsSlots[Index] + "/" + AllID.Settings[IndexSlots[Index]];
+                else
+                    Description.text = AllID.Descriptions[IndexSlots[Index]];
+
                 Name.text = AllID.Names[IndexSlots[Index]];
 
                 CurrentSlot = Index;
@@ -240,6 +306,17 @@ public class InventorySlots : MonoBehaviour
 
         if(Closet != null)
             Closet.UpdateCloset();
+    }
+
+    public void UnSelect()
+    {
+        {
+            CurrentSlot = -1;
+            PreviousSlot = -1;
+
+            Description.text = "";
+            Name.text = "";
+        }
     }
 
     public void ThrowOut(bool InInventory = true)
@@ -256,13 +333,15 @@ public class InventorySlots : MonoBehaviour
     {
         string data = string.Join("|", IndexSlots);
         PlayerPrefs.SetString("InventorySlots" + PlayerPrefs.GetInt("WorldIndex", 0), data);
+        data = string.Join("|", SettingsSlots);
+        PlayerPrefs.SetString("InventorySettingsSlots" + PlayerPrefs.GetInt("WorldIndex", 0), data);
     }
 
     public void OnDeath()
     {
         for(int d = 0; d < TotalSlots; d++)
         {
-            if(IndexSlots[d] != 0 && IndexSlots[d] < 50)
+            if(IndexSlots[d] != 0 && IndexSlots[d] < AllID.Resources)
             {
                 Vector3 pos = new Vector3(
                 SpawnPos.position.x + Random.Range(-0.4f, 0.4f),
@@ -271,7 +350,7 @@ public class InventorySlots : MonoBehaviour
 
                 int ObjectID = -1;
 
-                for(int i = 4500; i < 12000; i++)
+                for(int i = CenterSpawnedObjects.IDNotSpawnedObjects; i < CenterSpawnedObjects.IDSpawnedObjects; i++)
                 {
                     if(CenterSpawnedObjects.Instance.ResourcesID[i] == 0)
                     {
@@ -292,6 +371,7 @@ public class InventorySlots : MonoBehaviour
                 obj.AllID = AllID;
 
                 IndexSlots[d] = 0;
+                SettingsSlots[d] = 0;
                 ImageSlots[d].color = new Color(0, 0, 0, 0f);
 
                 if(Closet != null && CurrentSlot != -1)

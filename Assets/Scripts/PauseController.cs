@@ -77,7 +77,7 @@ public class PauseController : MonoBehaviour
         if(IsActive)
         {
             var State = PauseAnimator.GetCurrentAnimatorStateInfo(0);
-            if(!InvisibleOperations && State.IsName("Open") && State.normalizedTime >= 0.85f && Speed <= 0.05f && IsActive)
+            if(!InvisibleOperations && State.IsName("Open") && State.normalizedTime >= 0.98f && Speed <= 0.02f && IsActive)
             {
                 InvisibleOperations = true;
                 System.GC.Collect();

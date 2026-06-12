@@ -33,9 +33,9 @@ public class PreviewMode : MonoBehaviour
         var playerMap = inputActions.FindActionMap("Player");
         scrollMouseAction = playerMap.FindAction("ScrollMouse");
         scrollMouseAction.Enable();
-
-        DestroyPreviewModels.Destroy += VoidDestroy;
     }
+
+    private void OnEnable() {DestroyPreviewModels.Destroy += VoidDestroy;}
 
     private void VoidDestroy(bool Build)
     {

@@ -114,7 +114,6 @@ public class Spawn : MonoBehaviour
                 closet.Slots = new int[24];
                 return;
             }
-
             case 1:
             {
                 var closet = obj.GetComponent<Closet>();
@@ -126,6 +125,14 @@ public class Spawn : MonoBehaviour
 
                 closet.TotalSlots = 12;
                 closet.Slots = new int[12];
+                return;
+            }
+            case 2:
+            {
+                var RefillOxygen = obj.GetComponent<RefillOxygen>();
+
+                RefillOxygen.Spawned = true;
+                RefillOxygen.ID = ObjectID;
                 return;
             }
         }

@@ -15,7 +15,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource BiomeSound;
     public AudioClip[] BiomeSoundClips;
 
-    private float SoundVolumeFloat;
+    [HideInInspector] public float SoundVolumeFloat;
     private float SongVolumeFloat;
     private float OldSoundVolumeFloat;
     private float OldSongVolumeFloat;
@@ -94,7 +94,7 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayWalkSound()
     {
-        int Index = Random.Range(0, WalkSoundClips.Length);
+        int Index = Random.Range(0, 10);
         Sound.PlayOneShot(WalkSoundClips[Index]);
     }
     public void PlayBiomeSound(int Index, bool Stop)

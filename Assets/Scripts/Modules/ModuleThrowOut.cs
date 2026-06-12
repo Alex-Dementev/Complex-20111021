@@ -35,14 +35,16 @@ public class ModuleThrowOut
             CenterSpawnedObjects.Instance.ResourcesID[objectID] = 1;
             CenterSpawnedObjects.Instance.ResourcesPositions[objectID] = pos;
             CenterSpawnedObjects.Instance.ResourcesTypes[objectID] = id;
+            CenterSpawnedObjects.Instance.ResourcesSettings[objectID] = inv.SettingsSlots[inv.CurrentSlot];
 
             obj.ObjectID = objectID;
             obj.Spawned = true;
             obj.ID = id;
             obj.AllID = inv.AllID;
+            obj.Settings = inv.SettingsSlots[inv.CurrentSlot];
 
             inv.IndexSlots[inv.CurrentSlot] = 0;
-            inv.ImageSlots[inv.CurrentSlot].color = new Color(0,0,0,0f);
+            inv.SettingsSlots[inv.CurrentSlot] = 0;
 
             if(inv.Closet != null)
                 inv.Closet.Slots[inv.CurrentSlot - 28] = 0;
@@ -74,13 +76,16 @@ public class ModuleThrowOut
             CenterSpawnedObjects.Instance.ResourcesID[objectID] = 1;
             CenterSpawnedObjects.Instance.ResourcesPositions[objectID] = pos;
             CenterSpawnedObjects.Instance.ResourcesTypes[objectID] = inv.SpawnedID;
+            CenterSpawnedObjects.Instance.ResourcesSettings[objectID] = inv.SettingsSlots[0];
 
             obj.ObjectID = objectID;
             obj.Spawned = true;
             obj.ID = inv.SpawnedID;
             obj.AllID = inv.AllID;
+            obj.Settings = inv.SettingsSlots[0];
 
             inv.IndexSlots[0] = 0;
+            inv.SettingsSlots[0] = 0;
             
 
             Rigidbody rb = obj.GetComponent<Rigidbody>();
@@ -98,6 +103,7 @@ public class ModuleThrowOut
             if(inv.IndexSlots[i] == 0)
             {
                 inv.IndexSlots[i] = inv.SpawnedID;
+                inv.SettingsSlots[i] = inv.AllID.Settings[inv.SpawnedID];
                 return;
             }
         }
@@ -123,10 +129,12 @@ public class ModuleThrowOut
         CenterSpawnedObjects.Instance.ResourcesID[objectID] = 1;
         CenterSpawnedObjects.Instance.ResourcesPositions[objectID] = pos;
         CenterSpawnedObjects.Instance.ResourcesTypes[objectID] = inv.SpawnedID;
+        CenterSpawnedObjects.Instance.ResourcesSettings[objectID] = inv.AllID.Settings[inv.SpawnedID];
 
         obj.ObjectID = objectID;
         obj.Spawned = true;
         obj.ID = inv.SpawnedID;
         obj.AllID = inv.AllID;
+        obj.Settings = inv.AllID.Settings[inv.SpawnedID];
     }
 }

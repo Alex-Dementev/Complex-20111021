@@ -11,6 +11,7 @@ public class Objects : MonoBehaviour, IInteractable
     private bool Load;
     private bool Reised;
     private Rigidbody rb;
+    public float Settings;
 
 
     void Start()
@@ -32,6 +33,7 @@ public class Objects : MonoBehaviour, IInteractable
             {
                 CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] = transform.position;
                 CenterSpawnedObjects.Instance.ResourcesRotations[ObjectID] = transform.eulerAngles;
+                CenterSpawnedObjects.Instance.ResourcesSettings[ObjectID] = Settings;
                 Saved = true;
             }
             else if(!PauseController.InvisibleOperations)
@@ -63,6 +65,7 @@ public class Objects : MonoBehaviour, IInteractable
             if(InventorySlots.Instance.IndexSlots[i] == 0)
             {
                 InventorySlots.Instance.IndexSlots[i] = ID;
+                InventorySlots.Instance.SettingsSlots[i] = Settings;
                 foundSlot = true;
                 Reised = true;
                 break;
@@ -79,6 +82,7 @@ public class Objects : MonoBehaviour, IInteractable
         if(!Spawned)
         {
             CenterSpawnedObjects.Instance.ResourcesID[ObjectID] = 1;
+            CenterSpawnedObjects.Instance.ResourcesSettings[ObjectID] = 0;
             CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] = new Vector3(0, 0, 0);
             CenterSpawnedObjects.Instance.ResourcesRotations[ObjectID] = new Vector3(0, 0, 0);
             CenterSpawnedObjects.Instance.ResourcesTypes[ObjectID] = 0;
@@ -86,6 +90,7 @@ public class Objects : MonoBehaviour, IInteractable
         else
         {
             CenterSpawnedObjects.Instance.ResourcesID[ObjectID] = 0;
+            CenterSpawnedObjects.Instance.ResourcesSettings[ObjectID] = 0;
             CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] = new Vector3(0, 0, 0);
             CenterSpawnedObjects.Instance.ResourcesRotations[ObjectID] = new Vector3(0, 0, 0);
             CenterSpawnedObjects.Instance.ResourcesTypes[ObjectID] = 0;
@@ -106,6 +111,7 @@ public class Objects : MonoBehaviour, IInteractable
 
         if(CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] != new Vector3(0, 0, 0))
         {
+            Settings = CenterSpawnedObjects.Instance.ResourcesSettings[ObjectID];
             transform.position = CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID];
             transform.rotation = Quaternion.Euler(CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID]);
         }

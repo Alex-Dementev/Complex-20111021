@@ -8,7 +8,7 @@ public class HandItemSpawner : MonoBehaviour
     private GameObject Object;
     public AllID AllID;
     public Transform HandPoint;
-    public bool Active;
+    public static bool ActiveItem;
     public Image Slot;
     public InputActionAsset inputActions;
     private InputAction ChooseAction;
@@ -43,7 +43,7 @@ public class HandItemSpawner : MonoBehaviour
             ChangeAnimator.CrossFade("Choose", 0.05f);
         }
 
-        if(ThrowOutAction.triggered && Active)
+        if(ThrowOutAction.triggered && ActiveItem)
         {
             ThrowOut = true;
             ChangeAnimator.CrossFade("Choose", 0.05f);
@@ -59,14 +59,14 @@ public class HandItemSpawner : MonoBehaviour
         if(InventorySlots.Instance.IndexSlots[0] <= 0)
         {
             Slot.color = new Color(55f/255f, 55f/255f, 55f/255f);
-            Active = false;
+            ActiveItem = false;
 
             return;
         }
             
         InstantiateObject();
 
-        Active = true;
+        ActiveItem = true;
         Slot.color = new Color(85f/255f, 85f/255f, 85f/255f);
     }
 
@@ -74,7 +74,7 @@ public class HandItemSpawner : MonoBehaviour
     {
         if(ThrowOut)
         {
-            Active = false;
+            ActiveItem = false;
             Slot.color = new Color(55f/255f, 55f/255f, 55f/255f);
 
             if(Object != null)
@@ -91,18 +91,18 @@ public class HandItemSpawner : MonoBehaviour
 
 
 
-        if(Active)
+        if(ActiveItem)
         {
-            Active = false;
+            ActiveItem = false;
             Slot.color = new Color(55f/255f, 55f/255f, 55f/255f);
 
             DestroyObject();
 
             return;
         }
-        else if(!Active && InventorySlots.Instance.IndexSlots[0] >= 1)
+        else if(!ActiveItem && InventorySlots.Instance.IndexSlots[0] >= 1)
         {
-            Active = true;
+            ActiveItem = true;
             Slot.color = new Color(85f/255f, 85f/255f, 85f/255f);
 
             InstantiateObject();

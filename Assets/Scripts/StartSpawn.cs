@@ -34,17 +34,48 @@ public class StartSpawn : MonoBehaviour
         {
             if(CenterSpawnedObjects.Instance.ResourcesID[i] == 1)
             {
-                Closet closet = Instantiate(ClosetPrefabs[CenterSpawnedObjects.Instance.ResourcesTypes[i]], CenterSpawnedObjects.Instance.ResourcesPositions[i], Quaternion.Euler(CenterSpawnedObjects.Instance.ResourcesRotations[i])).GetComponent<Closet>();
-
-                closet.Spawned = true;
-                closet.ID = i - CenterSpawnedObjects.IDSpawnedObjects;
-                closet.ClosetType = CenterSpawnedObjects.Instance.ResourcesTypes[i];
-                closet.TotalSlots = CenterSpawnedObjects.Instance.ResourcesItems[i - CenterSpawnedObjects.IDSpawnedObjects].Length;
-                closet.Slots = new int[closet.TotalSlots];
-
-                for(int j = 0; j < closet.TotalSlots; j++)
+                switch (CenterSpawnedObjects.Instance.ResourcesTypes[i])
                 {
-                    closet.Slots[j] = CenterSpawnedObjects.Instance.ResourcesItems[i - CenterSpawnedObjects.IDSpawnedObjects][j];
+                    case 0:
+                    {
+                        Closet closet = Instantiate(ClosetPrefabs[CenterSpawnedObjects.Instance.ResourcesTypes[i]], CenterSpawnedObjects.Instance.ResourcesPositions[i], Quaternion.Euler(CenterSpawnedObjects.Instance.ResourcesRotations[i])).GetComponent<Closet>();
+
+                        closet.Spawned = true;
+                        closet.ID = i - CenterSpawnedObjects.IDSpawnedObjects;
+                        closet.ClosetType = CenterSpawnedObjects.Instance.ResourcesTypes[i];
+                        closet.TotalSlots = CenterSpawnedObjects.Instance.ResourcesItems[i - CenterSpawnedObjects.IDSpawnedObjects].Length;
+                        closet.Slots = new int[closet.TotalSlots];
+
+                        for(int j = 0; j < closet.TotalSlots; j++)
+                        {
+                            closet.Slots[j] = CenterSpawnedObjects.Instance.ResourcesItems[i - CenterSpawnedObjects.IDSpawnedObjects][j];
+                        }
+                        break;
+                    }
+                    case 1:
+                    {
+                        Closet closet = Instantiate(ClosetPrefabs[CenterSpawnedObjects.Instance.ResourcesTypes[i]], CenterSpawnedObjects.Instance.ResourcesPositions[i], Quaternion.Euler(CenterSpawnedObjects.Instance.ResourcesRotations[i])).GetComponent<Closet>();
+
+                        closet.Spawned = true;
+                        closet.ID = i - CenterSpawnedObjects.IDSpawnedObjects;
+                        closet.ClosetType = CenterSpawnedObjects.Instance.ResourcesTypes[i];
+                        closet.TotalSlots = CenterSpawnedObjects.Instance.ResourcesItems[i - CenterSpawnedObjects.IDSpawnedObjects].Length;
+                        closet.Slots = new int[closet.TotalSlots];
+
+                        for(int j = 0; j < closet.TotalSlots; j++)
+                        {
+                            closet.Slots[j] = CenterSpawnedObjects.Instance.ResourcesItems[i - CenterSpawnedObjects.IDSpawnedObjects][j];
+                        }
+                        break;
+                    }
+                    case 2:
+                    {
+                        RefillOxygen RefillOxygen = Instantiate(AllID.BuildPrefab[CenterSpawnedObjects.Instance.ResourcesTypes[i]], CenterSpawnedObjects.Instance.ResourcesPositions[i], Quaternion.Euler(CenterSpawnedObjects.Instance.ResourcesRotations[i])).GetComponent<RefillOxygen>();
+
+                        RefillOxygen.Spawned = true;
+                        RefillOxygen.ID = i - CenterSpawnedObjects.IDSpawnedObjects;
+                        break;
+                    }
                 }
             }
         }

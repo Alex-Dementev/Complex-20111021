@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 374801118597144898}
   - component: {fileID: 6903802857488092807}
   - component: {fileID: 7975973198024202552}
+  - component: {fileID: -9099939097440003501}
   m_Layer: 0
   m_Name: SmallCloset
   m_TagString: Closet
@@ -29,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 5658547196496027549}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 148.74, y: 26.25, z: 215.22}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -125,8 +126,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Closet
   Slots: 010000000200000001000000
+  Settings: []
   TotalSlots: 0
   Spawned: 0
   ClosetType: 1
-  CenterSpawnedObjects: {fileID: 0}
   ID: 1
+  Name: 
+--- !u!208 &-9099939097440003501
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5658547196496027549}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5

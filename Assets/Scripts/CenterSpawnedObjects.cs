@@ -15,11 +15,13 @@ public class CenterSpawnedObjects : MonoBehaviour
 
 
     public int[] ResourcesID = new int[17000];
+    public float[] ResourcesSettings = new float[17000];
     public Vector3[] ResourcesPositions = new Vector3[17000];
     public Vector3[] ResourcesRotations = new Vector3[17000];
     public int[] ResourcesTypes = new int[17000];
     public int[][] ResourcesItems = new int[5000][];
     public string[] ResourcesNames = new string[5000];
+    public float[][] ResourcesItemsSettings = new float[5000][];
 
 
     public static bool Load;
@@ -53,6 +55,9 @@ public class CenterSpawnedObjects : MonoBehaviour
 
         // 1. Сохраняем IDs (Строка 0)
         sb.Append(string.Join("|", ResourcesID)).Append('\n');
+
+
+        sb.Append(string.Join("|", ResourcesSettings)).Append('\n');
         
         // 2. Сохраняем Types (Строка 1)
         sb.Append(string.Join("|", ResourcesTypes)).Append('\n');
@@ -99,6 +104,17 @@ public class CenterSpawnedObjects : MonoBehaviour
               .Append(rot.z.ToString(CultureInfo.InvariantCulture));
             if (i < ResourcesRotations.Length - 1) sb.Append("|");
         }
+        sb.Append('\n'); 
+
+        for (int i = 0; i < ResourcesItemsSettings.Length; i++)
+        {
+            if (ResourcesItemsSettings[i] != null && ResourcesItemsSettings[i].Length > 0)
+            {
+                sb.Append(string.Join(" ", ResourcesItemsSettings[i]));
+            }
+            if (i < ResourcesItemsSettings.Length - 1) sb.Append("|");
+        }
+        sb.Append('\n'); 
 
         try
         {
@@ -113,7 +129,7 @@ public class CenterSpawnedObjects : MonoBehaviour
                 File.Move(tempPath, mainPath);
             }
         }
-        catch (System.Exception e)
+        catch (System.Exception)
         {
             if (File.Exists(tempPath)) File.Delete(tempPath);
         }
@@ -126,10 +142,12 @@ public class CenterSpawnedObjects : MonoBehaviour
         if (!File.Exists(path))
         {
             ResourcesID = new int[17000];
+            ResourcesSettings = new float[17000];
             ResourcesTypes = new int[17000];
             ResourcesPositions = new Vector3[17000];
             ResourcesRotations = new Vector3[17000]; 
             ResourcesItems = new int[5000][];
+            ResourcesItemsSettings = new float[5000][];
             ResourcesNames = new string[5000];
             Debug.Log("CSO: Новые массивы (нет файла сохранений)");
             Load = true;
@@ -138,7 +156,7 @@ public class CenterSpawnedObjects : MonoBehaviour
 
         string[] lines = File.ReadAllLines(path);
         
-        if (lines.Length < 6) 
+        if (lines.Length < 8) 
         {
             return;
         }
@@ -150,15 +168,21 @@ public class CenterSpawnedObjects : MonoBehaviour
             ResourcesID[i] = (i < idSplit.Length && !string.IsNullOrEmpty(idSplit[i])) ? int.Parse(idSplit[i]) : 0;
         }
 
+        string[] settingsSplit = lines[1].Split('|');
+        for (int i = 0; i < ResourcesSettings.Length; i++)
+        {
+            ResourcesSettings[i] = (i < settingsSplit.Length && !string.IsNullOrEmpty(settingsSplit[i])) ? int.Parse(settingsSplit[i]) : 0;
+        }
+
         // --- 2. Парсинг Types ---
-        string[] typeSplit = lines[1].Split('|');
+        string[] typeSplit = lines[2].Split('|');
         for (int i = 0; i < ResourcesTypes.Length; i++)
         {
             ResourcesTypes[i] = (i < typeSplit.Length && !string.IsNullOrEmpty(typeSplit[i])) ? int.Parse(typeSplit[i]) : 0;
         }
         
         // --- 3. Парсинг Позиций ---
-        string[] posSplit = lines[2].Split('|');
+        string[] posSplit = lines[3].Split('|');
         for (int i = 0; i < ResourcesPositions.Length; i++)
         {
             if (i < posSplit.Length && !string.IsNullOrEmpty(posSplit[i]))
@@ -178,7 +202,7 @@ public class CenterSpawnedObjects : MonoBehaviour
         }
 
         // --- 4. Парсинг Предметов ---
-        string[] itemsSplit = lines[3].Split('|');
+        string[] itemsSplit = lines[4].Split('|');
         ResourcesItems = new int[5000][];
 
         for (int i = 0; i < ResourcesItems.Length; i++)
@@ -211,7 +235,7 @@ public class CenterSpawnedObjects : MonoBehaviour
         }
 
         // --- 5. Парсинг Названий ---
-        string[] namesSplit = lines[4].Split('|');
+        string[] namesSplit = lines[5].Split('|');
         ResourcesNames = new string[5000]; 
 
         for (int i = 0; i < ResourcesNames.Length; i++)
@@ -219,7 +243,7 @@ public class CenterSpawnedObjects : MonoBehaviour
             ResourcesNames[i] = (i < namesSplit.Length) ? namesSplit[i] : "";
         }
         // --- 6. Парсинг Ротаций ---
-        string[] rotSplit = lines[5].Split('|');
+        string[] rotSplit = lines[6].Split('|');
         ResourcesRotations = new Vector3[17000];
         for (int i = 0; i < ResourcesRotations.Length; i++)
         {
@@ -237,6 +261,38 @@ public class CenterSpawnedObjects : MonoBehaviour
                 else ResourcesRotations[i] = Vector3.zero;
             }
             else ResourcesRotations[i] = Vector3.zero;
+        }
+
+        itemsSplit = lines[7].Split('|');
+        ResourcesItemsSettings = new float[5000][];
+
+        for (int i = 0; i < ResourcesItemsSettings.Length; i++)
+        {
+            // Если в файле есть данные для этого индекса и они не пустые
+            if (i < itemsSplit.Length && !string.IsNullOrWhiteSpace(itemsSplit[i]))
+            {
+                string trimmedLine = itemsSplit[i].Trim();
+                
+                if (string.IsNullOrEmpty(trimmedLine))
+                {
+                    // Нам похуй какой тип шкафа, если в сейве пусто, 
+                    // просто даем ему временный пустой массив, Closet сам его расширит под себя!
+                    ResourcesItemsSettings[i] = null; 
+                    continue;
+                }
+
+                string[] singleContainerItems = trimmedLine.Split(' ');
+                ResourcesItemsSettings[i] = new float[singleContainerItems.Length];
+
+                for (int j = 0; j < singleContainerItems.Length; j++)
+                {
+                    ResourcesItemsSettings[i][j] = int.Parse(singleContainerItems[j]);
+                }
+            }
+            else
+            {
+                ResourcesItemsSettings[i] = new float[0];
+            }
         }
         
         Load = true;
