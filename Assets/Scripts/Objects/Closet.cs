@@ -11,7 +11,7 @@ public class Closet : MonoBehaviour, IInteractable
     public int ID;
     private bool OnSave;
     private bool Load;
-    [HideInInspector]public string Name;
+    public string Name;
     private bool boolDestroy;
     private AllID AllID;
 
@@ -37,21 +37,6 @@ public class Closet : MonoBehaviour, IInteractable
                 return;
             }
 
-            if(ClosetType == 0)
-            {
-                TotalSlots = 24;
-                Slots = new int[24];
-                Settings = new float[24];
-                Name = "Большой шкаф";
-            }
-            else if(ClosetType == 1)
-            {
-                TotalSlots = 12;
-                Slots = new int[12];
-                Settings = new float[12];
-                Name = "Маленький шкаф";
-            }
-
             if (CenterSpawnedObjects.Instance.ResourcesItems[ID] == null)
             {
                 CenterSpawnedObjects.Instance.ResourcesItems[ID] = new int[Slots.Length];
@@ -66,9 +51,6 @@ public class Closet : MonoBehaviour, IInteractable
                 Slots[i] = CenterSpawnedObjects.Instance.ResourcesItems[ID][i];
                 Settings[i] = CenterSpawnedObjects.Instance.ResourcesItemsSettings[ID][i];
             }
-
-            CenterSpawnedObjects.Instance.ResourcesPositions[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.position;
-            CenterSpawnedObjects.Instance.ResourcesRotations[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.eulerAngles;
         }
         else
         {

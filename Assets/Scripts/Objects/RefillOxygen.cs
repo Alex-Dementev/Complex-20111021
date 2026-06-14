@@ -2,17 +2,18 @@ using UnityEngine;
 
 public class RefillOxygen : MonoBehaviour, IInteractable
 {
-    //public TMP_Text Name;
     public bool Spawned;
     private int Type = 2;
-    private int RefillOldIndex = 0;
+    private float RefillSettings = 0;
     private int RefillIndex = 0;
     public int ID;
     private bool OnSave;
     private bool Load;
-    [HideInInspector]public string Name;
     private bool boolDestroy;
     private AllID AllID;
+    public GameObject[] RefillEffect;
+
+    public float Speed = 2f;
 
     private int[] resource1 = new int[2];
     private int[] resource2 = new int[2];
@@ -27,34 +28,26 @@ public class RefillOxygen : MonoBehaviour, IInteractable
     {
         Load = true;
 
-        if(!Spawned)
+        if(!Spawned && CenterSpawnedObjects.Instance.ResourcesID[ID + CenterSpawnedObjects.IDSpawnedObjects] == 1)
         {
-            if(CenterSpawnedObjects.Instance.ResourcesID[ID + CenterSpawnedObjects.IDSpawnedObjects] == 1)
-            {
-                Destroy(gameObject);
+            Destroy(gameObject);
 
-                return;
-            }
-
-            if(RefillIndex != RefillOldIndex)
-            {
-                RefillOldIndex = RefillIndex;
-            }
-
-            CenterSpawnedObjects.Instance.ResourcesPositions[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.position;
-            CenterSpawnedObjects.Instance.ResourcesRotations[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.eulerAngles;
+            return;
         }
-        else
-        {
-            if(RefillIndex != RefillOldIndex)
-            {
-                RefillOldIndex = RefillIndex;
-            }
-        }
+
+        RefillIndex = CenterSpawnedObjects.Instance.ResourcesItems[ID][0];
+        RefillSettings = CenterSpawnedObjects.Instance.ResourcesItems[ID][1];
     }
 
     void Update()
     {
+        if(AllID.Settings[RefillIndex] != 0)
+        {
+            RefillSettings = Mathf.MoveTowards(RefillSettings, AllID.Settings[RefillIndex], Time.deltaTime * Speed);
+
+            Effect();
+        }
+
         if(CenterSpawnedObjects.Load)
         {
             if(!Load)
@@ -77,6 +70,9 @@ public class RefillOxygen : MonoBehaviour, IInteractable
         CenterSpawnedObjects.Instance.ResourcesRotations[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.eulerAngles;
 
         CenterSpawnedObjects.Instance.ResourcesTypes[ID + CenterSpawnedObjects.IDSpawnedObjects] = Type;
+
+        CenterSpawnedObjects.Instance.ResourcesItems[ID][0] = RefillIndex;
+        CenterSpawnedObjects.Instance.ResourcesItems[ID][1] = (int)RefillSettings;
     }
 
     public void RightClick()
@@ -152,14 +148,17 @@ public class RefillOxygen : MonoBehaviour, IInteractable
 
         CenterSpawnedObjects.Instance.ResourcesNames[ID] = null;
         CenterSpawnedObjects.Instance.ResourcesItems[ID] = null;
-        CenterSpawnedObjects.Instance.ResourcesItemsSettings[ID] = null;
+        CenterSpawnedObjects.Instance.ResourcesSettings[ID] = 0;
 
         Destroy(gameObject);
     }
 
     public string GetName()
     {
-        return Name;
+        if(RefillIndex >= AllID.Items && RefillIndex < AllID.Ballons)
+            return "Кислород: " + (int)RefillSettings + "/" + AllID.Settings[RefillIndex];
+        else
+            return "Пусто";
     }
 
     public void LeftClick()
@@ -174,10 +173,86 @@ public class RefillOxygen : MonoBehaviour, IInteractable
         }
 
 
+        if(AllID.Settings[RefillIndex] != 0)
+        {
+            bool foundSlot = false;
+            for(int i = 0; i < InventorySlots.Instance.TotalSlots; i++)
+            {
+                if(InventorySlots.Instance.IndexSlots[i] == 0)
+                {
+                    InventorySlots.Instance.IndexSlots[i] = RefillIndex;
+                    InventorySlots.Instance.SettingsSlots[i] = RefillSettings;
+                    foundSlot = true;
+                    break;
+                }
+            }
+
+            if(!foundSlot)
+            {
+                LiftAnObject.Instance.StartTrableAnimator("Инвентарь полон");
+                return;
+            }
+
+            RefillIndex = 0;
+            RefillSettings = 0;
+            CenterSpawnedObjects.Instance.ResourcesItems[ID][0] = 0;
+            CenterSpawnedObjects.Instance.ResourcesItems[ID][1] = 0;
+
+            Debug.Log("Ты забрал баллон с кислородом!");
+
+            Effect();
+            
+            return;
+        }
+
+        if(InventorySlots.Instance.IndexSlots[0] >= AllID.Items && InventorySlots.Instance.IndexSlots[0] < AllID.Ballons)
+        {
+            if(AllID.Settings[RefillIndex] == 0)
+            {
+                RefillIndex = InventorySlots.Instance.IndexSlots[0];
+                RefillSettings = InventorySlots.Instance.SettingsSlots[0];
+                InventorySlots.Instance.IndexSlots[0] = 0;
+                InventorySlots.Instance.SettingsSlots[0] = 0;
+                CenterSpawnedObjects.Instance.ResourcesItems[ID][0] = RefillIndex;
+                CenterSpawnedObjects.Instance.ResourcesItems[ID][1] = (int)RefillSettings;
+
+                Debug.Log("Заправка кислорода!");
+            }
+        }
+        else
+        {
+            LiftAnObject.Instance.StartTrableAnimator("Этот предмет не подходит!");
+            Debug.Log("Этот предмет не подходит!");
+        }
     }
 
     void Start()
     {
         AllID = InventorySlots.Instance.AllID;
+    }
+
+    private void Effect()
+    {
+        if(RefillIndex != 0)
+        {
+            if(RefillSettings == AllID.Settings[RefillIndex])
+            {
+                RefillEffect[1].SetActive(false);
+                RefillEffect[0].SetActive(true);
+            }
+            else
+            {
+                RefillEffect[1].SetActive(true);
+                RefillEffect[0].SetActive(false);
+            }
+
+            RefillEffect[2].SetActive(false);
+        }
+        else
+        {
+            RefillEffect[0].SetActive(false);
+            RefillEffect[1].SetActive(false);
+            RefillEffect[2].SetActive(true);
+        }
     }
 }

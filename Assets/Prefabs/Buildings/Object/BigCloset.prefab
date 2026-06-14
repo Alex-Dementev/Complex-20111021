@@ -125,13 +125,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb88c89417ca2c841a876fc6e6b91e9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Closet
-  Slots: 010000000200000001000000
-  Settings: []
-  TotalSlots: 0
+  Slots: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  Settings:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  TotalSlots: 24
   Spawned: 0
   ClosetType: 0
   ID: 0
-  Name: 
+  Name: "\u0411\u043E\u043B\u044C\u0448\u043E\u0439 \u0448\u043A\u0430\u0444"
 --- !u!208 &-5770956207698853804
 NavMeshObstacle:
   m_ObjectHideFlags: 0

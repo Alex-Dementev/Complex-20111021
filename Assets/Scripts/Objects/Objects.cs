@@ -124,6 +124,9 @@ public class Objects : MonoBehaviour, IInteractable
 
     public string GetName()
     {
-        return Name;
+        if(AllID.Settings[ID] == 0)
+            return Name;
+        else
+            return Name + " " + (int)Settings + "/" + AllID.Settings[ID];
     }
 }

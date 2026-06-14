@@ -12447,8 +12447,8 @@ MonoBehaviour:
   - 
   - 
   - 
-  - 
-  - 
+  - "\u041C\u0430\u043B\u0435\u043D\u044C\u043A\u0438\u0439 \u0440\u044E\u043A\u0437\u0430\u043A"
+  - "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0440\u044E\u043A\u0437\u0430\u043A"
   - 
   - 
   - 
@@ -12563,8 +12563,10 @@ MonoBehaviour:
   - 
   - 
   - 
-  - 
-  - 
+  - "\u041F\u043E\u0437\u0432\u043E\u043B\u044F\u0435\u0442 \u0445\u0440\u0430\u043D\u0438\u0442\u044C
+    \u0431\u043E\u043B\u044C\u0448\u0435 \u043F\u0440\u0435\u0434\u043C\u0435\u0442\u043E\u0432"
+  - "\u041F\u043E\u0437\u0432\u043E\u043B\u044F\u0435\u0442 \u0445\u0440\u0430\u043D\u0438\u0442\u044C
+    \u0431\u043E\u043B\u044C\u0448\u0435 \u043F\u0440\u0435\u0434\u043C\u0435\u0442\u043E\u0432"
   - 
   - 
   - 
@@ -13027,8 +13029,8 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  - 0
-  - 0
+  - 3
+  - 6
   - 0
   - 0
   - 0
@@ -13143,8 +13145,8 @@ MonoBehaviour:
   - 
   - 
   - 
-  - 
-  - 
+  - "\u0412\u043C\u0435\u0441\u0442\u0438\u043C\u043E\u0441\u0442\u044C"
+  - "\u0412\u043C\u0435\u0441\u0442\u0438\u043C\u043E\u0441\u0442\u044C"
   - 
   - 
   - 
@@ -90263,11 +90265,19 @@ PrefabInstance:
       objectReference: {fileID: 229263079}
     - target: {fileID: 184943563606044427, guid: 74523dcec6dab9944a68acdcaff7b8a1, type: 3}
       propertyPath: Slots.Array.size
-      value: 0
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 184943563606044427, guid: 74523dcec6dab9944a68acdcaff7b8a1, type: 3}
+      propertyPath: 'Slots.Array.data[1]'
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 184943563606044427, guid: 74523dcec6dab9944a68acdcaff7b8a1, type: 3}
       propertyPath: CenterSpawnedObjects
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 184943563606044427, guid: 74523dcec6dab9944a68acdcaff7b8a1, type: 3}
+      propertyPath: 'Settings.Array.data[1]'
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 7624711042269984168, guid: 74523dcec6dab9944a68acdcaff7b8a1, type: 3}
       propertyPath: m_Name
@@ -90404,7 +90414,19 @@ PrefabInstance:
       objectReference: {fileID: 229263079}
     - target: {fileID: 7975973198024202552, guid: 6ac7d5cbaa7a9974599eadbe5da9cda9, type: 3}
       propertyPath: Slots.Array.size
-      value: 0
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 7975973198024202552, guid: 6ac7d5cbaa7a9974599eadbe5da9cda9, type: 3}
+      propertyPath: 'Slots.Array.data[4]'
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7975973198024202552, guid: 6ac7d5cbaa7a9974599eadbe5da9cda9, type: 3}
+      propertyPath: 'Slots.Array.data[7]'
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7975973198024202552, guid: 6ac7d5cbaa7a9974599eadbe5da9cda9, type: 3}
+      propertyPath: 'Slots.Array.data[8]'
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7975973198024202552, guid: 6ac7d5cbaa7a9974599eadbe5da9cda9, type: 3}
       propertyPath: CenterSpawnedObjects

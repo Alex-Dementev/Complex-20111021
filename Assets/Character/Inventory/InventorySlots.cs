@@ -173,6 +173,55 @@ public class InventorySlots : MonoBehaviour
             return;
         }
 
+        if(Index == 52 || PreviousSlot == 52)
+        {
+            if(PreviousSlot != -1)
+            {
+                if(IndexSlots[Index] != 0)
+                {
+                    if(IndexSlots[Index] < AllID.Ballons || IndexSlots[Index] > AllID.Backpack)
+                    {
+                        UnSelect();
+
+                        return;
+                    }
+                }
+                else if(IndexSlots[PreviousSlot] != 0)
+                {
+                    if(IndexSlots[PreviousSlot] < AllID.Ballons || IndexSlots[PreviousSlot] > AllID.Backpack)
+                    {
+                        UnSelect();
+
+                        return;
+                    }
+                }
+            }
+        }
+        if(Index >= 53 || PreviousSlot >= 53)
+        {
+            if(PreviousSlot != -1)
+            {
+                if(IndexSlots[Index] != 0)
+                {
+                    if(IndexSlots[Index] < AllID.Items || IndexSlots[Index] > AllID.Ballons)
+                    {
+                        UnSelect();
+                        
+                        return;
+                    }
+                }
+                else if(IndexSlots[PreviousSlot] != 0)
+                {
+                    if(IndexSlots[PreviousSlot] < AllID.Items || IndexSlots[PreviousSlot] > AllID.Ballons)
+                    {
+                        UnSelect();
+                        
+                        return;
+                    }
+                }
+            }
+        }
+
         if(Closet != null && FastSendAction.IsPressed())
         {
             if(Index <= TotalSlots)
@@ -217,49 +266,6 @@ public class InventorySlots : MonoBehaviour
 
         if (CurrentSlot != -1 && Index != PreviousSlot)
         {
-            if(Index == 52 || PreviousSlot == 52)
-            {
-                if(IndexSlots[Index] != 0)
-                {
-                    if(IndexSlots[Index] < AllID.Ballons || IndexSlots[Index] > AllID.Backpack)
-                    {
-                        UnSelect();
-
-                        return;
-                    }
-                }
-                else if(PreviousSlot != 0)
-                {
-                    if(IndexSlots[PreviousSlot] < AllID.Ballons || IndexSlots[PreviousSlot] > AllID.Backpack)
-                    {
-                        UnSelect();
-                        
-                        return;
-                    }
-                }
-            }
-            if(Index >= 53 || PreviousSlot >= 53)
-            {
-                if(IndexSlots[Index] != 0)
-                {
-                    if(IndexSlots[Index] < AllID.Items || IndexSlots[Index] > AllID.Ballons)
-                    {
-                        UnSelect();
-                        
-                        return;
-                    }
-                }
-                else if(PreviousSlot != 0)
-                {
-                    if(IndexSlots[PreviousSlot] < AllID.Items || IndexSlots[PreviousSlot] > AllID.Ballons)
-                    {
-                        UnSelect();
-                        
-                        return;
-                    }
-                }
-            }
-
             int tempID = IndexSlots[PreviousSlot];
             IndexSlots[PreviousSlot] = IndexSlots[Index];
             IndexSlots[Index] = tempID;
@@ -290,8 +296,10 @@ public class InventorySlots : MonoBehaviour
             {
                 SlotsAllocations[Index].color = new Color(85f/255f, 85f/255f, 85f/255f);
 
-                if(AllID.Settings[IndexSlots[Index]] != 0)
+                if(AllID.Settings[IndexSlots[Index]] != 0 && AllID.Settings[IndexSlots[Index]] >= 13)
                     Description.text = AllID.Descriptions[IndexSlots[Index]] + ".\n" + AllID.SettingsStrings[IndexSlots[Index]] + ": " + (int)SettingsSlots[Index] + "/" + AllID.Settings[IndexSlots[Index]];
+                else if(AllID.Settings[IndexSlots[Index]] != 0)
+                    Description.text = AllID.Descriptions[IndexSlots[Index]] + ".\n" + AllID.SettingsStrings[IndexSlots[Index]] + ": " + SettingsSlots[Index];
                 else
                     Description.text = AllID.Descriptions[IndexSlots[Index]];
 
@@ -311,8 +319,17 @@ public class InventorySlots : MonoBehaviour
     public void UnSelect()
     {
         {
-            CurrentSlot = -1;
-            PreviousSlot = -1;
+            if(CurrentSlot != -1)
+            {
+                SlotsAllocations[CurrentSlot].color = new Color(55f / 255f, 55f / 255f, 55f / 255f);
+                CurrentSlot = -1;
+            }
+
+            if(PreviousSlot != -1)
+            {
+                SlotsAllocations[PreviousSlot].color = new Color(55f / 255f, 55f / 255f, 55f / 255f);
+                PreviousSlot = -1;
+            }
 
             Description.text = "";
             Name.text = "";

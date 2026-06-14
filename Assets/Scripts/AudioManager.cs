@@ -94,7 +94,7 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayWalkSound()
     {
-        int Index = Random.Range(0, 10);
+        int Index = Random.Range(0, 9);
         Sound.PlayOneShot(WalkSoundClips[Index]);
     }
     public void PlayBiomeSound(int Index, bool Stop)

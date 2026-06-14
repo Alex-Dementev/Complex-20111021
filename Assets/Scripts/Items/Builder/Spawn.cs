@@ -131,6 +131,8 @@ public class Spawn : MonoBehaviour
             {
                 var RefillOxygen = obj.GetComponent<RefillOxygen>();
 
+                CenterSpawnedObjects.Instance.ResourcesItems[ObjectID] = new int[2];
+
                 RefillOxygen.Spawned = true;
                 RefillOxygen.ID = ObjectID;
                 return;
