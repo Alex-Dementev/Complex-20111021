@@ -5,19 +5,21 @@ public class Objects : MonoBehaviour, IInteractable
     public int ID;
     public int ObjectID;
     public string Name;
-    public AllID AllID;
+    private AllID AllID;
     public bool Spawned;
     private bool Saved;
     private bool Load;
     private bool Reised;
     private Rigidbody rb;
     public float Settings;
+    public int ButteryID;
 
 
     void Start()
     {
+        AllID = FindObjectOfType<AllID>();
         rb = GetComponent<Rigidbody>();
-        
+
         Name = AllID.Names[ID];
     }
 
@@ -34,6 +36,7 @@ public class Objects : MonoBehaviour, IInteractable
                 CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] = transform.position;
                 CenterSpawnedObjects.Instance.ResourcesRotations[ObjectID] = transform.eulerAngles;
                 CenterSpawnedObjects.Instance.ResourcesSettings[ObjectID] = Settings;
+                CenterSpawnedObjects.Instance.ResourcesButteryID[ObjectID] = ButteryID;
                 Saved = true;
             }
             else if(!PauseController.InvisibleOperations)
@@ -60,12 +63,18 @@ public class Objects : MonoBehaviour, IInteractable
         
         
         bool foundSlot = false;
+
         for(int i = 0; i < InventorySlots.Instance.TotalSlots; i++)
         {
             if(InventorySlots.Instance.IndexSlots[i] == 0)
             {
-                InventorySlots.Instance.IndexSlots[i] = ID;
-                InventorySlots.Instance.SettingsSlots[i] = Settings;
+                var inv = InventorySlots.Instance;
+                inv.IndexSlots[i] = ID;
+                inv.SettingsSlots[i] = Settings;
+                inv.ButteryIDSlots[i] = ButteryID;
+                if(i < 7)
+                    inv.UpplyQuickAccess(i);
+                inv.UpplySlots(i);
                 foundSlot = true;
                 Reised = true;
                 break;
@@ -80,21 +89,15 @@ public class Objects : MonoBehaviour, IInteractable
 
 
         if(!Spawned)
-        {
             CenterSpawnedObjects.Instance.ResourcesID[ObjectID] = 1;
-            CenterSpawnedObjects.Instance.ResourcesSettings[ObjectID] = 0;
-            CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] = new Vector3(0, 0, 0);
-            CenterSpawnedObjects.Instance.ResourcesRotations[ObjectID] = new Vector3(0, 0, 0);
-            CenterSpawnedObjects.Instance.ResourcesTypes[ObjectID] = 0;
-        }
         else
-        {
             CenterSpawnedObjects.Instance.ResourcesID[ObjectID] = 0;
-            CenterSpawnedObjects.Instance.ResourcesSettings[ObjectID] = 0;
-            CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] = new Vector3(0, 0, 0);
-            CenterSpawnedObjects.Instance.ResourcesRotations[ObjectID] = new Vector3(0, 0, 0);
-            CenterSpawnedObjects.Instance.ResourcesTypes[ObjectID] = 0;
-        }
+
+        CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] = new Vector3(0, 0, 0);
+        CenterSpawnedObjects.Instance.ResourcesRotations[ObjectID] = new Vector3(0, 0, 0);
+        CenterSpawnedObjects.Instance.ResourcesSettings[ObjectID] = 0;
+        CenterSpawnedObjects.Instance.ResourcesButteryID[ObjectID] = 0;
+        CenterSpawnedObjects.Instance.ResourcesTypes[ObjectID] = 0;
 
         Destroy(gameObject);
     }
@@ -112,8 +115,9 @@ public class Objects : MonoBehaviour, IInteractable
         if(CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID] != new Vector3(0, 0, 0))
         {
             Settings = CenterSpawnedObjects.Instance.ResourcesSettings[ObjectID];
+            ButteryID = CenterSpawnedObjects.Instance.ResourcesButteryID[ObjectID];
             transform.position = CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID];
-            transform.rotation = Quaternion.Euler(CenterSpawnedObjects.Instance.ResourcesPositions[ObjectID]);
+            transform.rotation = Quaternion.Euler(CenterSpawnedObjects.Instance.ResourcesRotations[ObjectID]);
         }
     }
 
@@ -126,6 +130,8 @@ public class Objects : MonoBehaviour, IInteractable
     {
         if(AllID.Settings[ID] == 0)
             return Name;
+        else if(AllID.Settings[ID] <= 12)
+            return Name + " (" + (int)Settings + ")";
         else
             return Name + " " + (int)Settings + "/" + AllID.Settings[ID];
     }

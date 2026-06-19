@@ -10,11 +10,14 @@ public class AllID : MonoBehaviour
     public GameObject[] HandPrefab;
     public float[] Settings;
     public string[] SettingsStrings;
+    public bool[] Buttery;
+    public int[] SliderTypes;
 
     public const int Resources = 50;
     public const int Items = 100;
     public const int Ballons = 110;
     public const int Backpack = 115;
+    public const int Butteries = 120;
 
 
     [Header("Постройки:")]

@@ -89,6 +89,8 @@ public class Menu : MonoBehaviour
         PlayerPrefs.DeleteKey("MinusVisibility" + WorldIndexDelete);
         PlayerPrefs.DeleteKey("DelayFastMinusVisibility" + WorldIndexDelete);
         PlayerPrefs.DeleteKey("Visibility" + WorldIndexDelete);
+        PlayerPrefs.DeleteKey("InventorySettingsSlots" + WorldIndexDelete);
+        PlayerPrefs.DeleteKey("InventoryButteryIDSlots" + WorldIndexDelete);
 
 
         StartText[WorldIndexDelete].text = "Начать";

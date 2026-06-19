@@ -5,6 +5,7 @@ public class Closet : MonoBehaviour, IInteractable
     //public TMP_Text Name;
     public int[] Slots;
     public float[] Settings;
+    public int[] ButteryID;
     public int TotalSlots;
     public bool Spawned;
     public int ClosetType;
@@ -20,13 +21,12 @@ public class Closet : MonoBehaviour, IInteractable
     private int[] resource3 = new int[2];
     private int[] resource4 = new int[2];
 
-    private float StartDelay = 0.3f;
-
     
 
     public void UpdateState()
     {
         Load = true;
+
 
         if(!Spawned)
         {
@@ -37,20 +37,28 @@ public class Closet : MonoBehaviour, IInteractable
                 return;
             }
 
-            if (CenterSpawnedObjects.Instance.ResourcesItems[ID] == null)
-            {
-                CenterSpawnedObjects.Instance.ResourcesItems[ID] = new int[Slots.Length];
-                CenterSpawnedObjects.Instance.ResourcesItemsSettings[ID] = new float[Settings.Length];
-            }
-
             if (CenterSpawnedObjects.Instance.ResourcesNames[ID] != "" && CenterSpawnedObjects.Instance.ResourcesNames[ID] != null)
                 Name = CenterSpawnedObjects.Instance.ResourcesNames[ID];
-
-            for(int i = 0; i < TotalSlots; i++)
+            else
             {
-                Slots[i] = CenterSpawnedObjects.Instance.ResourcesItems[ID][i];
-                Settings[i] = CenterSpawnedObjects.Instance.ResourcesItemsSettings[ID][i];
+                CenterSpawnedObjects.Instance.ResourcesNames[ID] = Name;
+                CenterSpawnedObjects.Instance.ResourcesPositions[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.position;
+                CenterSpawnedObjects.Instance.ResourcesRotations[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.eulerAngles;
             }
+
+
+            if(CenterSpawnedObjects.Instance.ResourcesItems[ID] != null)
+            {
+                for(int i = 0; i < TotalSlots; i++)
+                {
+                    Slots[i] = CenterSpawnedObjects.Instance.ResourcesItems[ID][i];
+                    Settings[i] = CenterSpawnedObjects.Instance.ResourcesItemsSettings[ID][i];
+                    ButteryID[i] = CenterSpawnedObjects.Instance.ResourcesItemsButteryID[ID][i];
+                }
+            }
+
+            transform.position = CenterSpawnedObjects.Instance.ResourcesPositions[ID + CenterSpawnedObjects.IDSpawnedObjects];
+            transform.eulerAngles = CenterSpawnedObjects.Instance.ResourcesRotations[ID + CenterSpawnedObjects.IDSpawnedObjects];
         }
         else
         {
@@ -73,6 +81,7 @@ public class Closet : MonoBehaviour, IInteractable
             {
                 Slots[i] = CenterSpawnedObjects.Instance.ResourcesItems[ID][i];
                 Settings[i] = CenterSpawnedObjects.Instance.ResourcesItemsSettings[ID][i];
+                ButteryID[i] = CenterSpawnedObjects.Instance.ResourcesItemsButteryID[ID][i];
             }
         }
     }
@@ -85,15 +94,13 @@ public class Closet : MonoBehaviour, IInteractable
                 UpdateState();
 
             if(!OnSave && PauseController.InvisibleOperations && Load)
-                UpdateCloset();
+                UpdateSave();
             else if(!PauseController.InvisibleOperations)
                 OnSave = false;
         }
-
-        StartDelay -= Time.deltaTime;
     }
 
-    public void UpdateCloset()
+    public void UpdateSave()
     {
         OnSave = true;
 
@@ -108,12 +115,14 @@ public class Closet : MonoBehaviour, IInteractable
         {
             CenterSpawnedObjects.Instance.ResourcesItems[ID] = new int[Slots.Length]; 
             CenterSpawnedObjects.Instance.ResourcesItemsSettings[ID] = new float[Settings.Length]; 
+            CenterSpawnedObjects.Instance.ResourcesItemsButteryID[ID] = new int[ButteryID.Length]; 
         }
         
         for(int i = 0; i < Slots.Length; i++)
         {
             CenterSpawnedObjects.Instance.ResourcesItems[ID][i] = Slots[i];
             CenterSpawnedObjects.Instance.ResourcesItemsSettings[ID][i] = Settings[i];
+            CenterSpawnedObjects.Instance.ResourcesItemsButteryID[ID][i] = ButteryID[i];
         }
     }
 
@@ -125,7 +134,7 @@ public class Closet : MonoBehaviour, IInteractable
             return;
         }
 
-        if(boolDestroy || Time.timeScale != 1 || StartDelay > 0)
+        if(boolDestroy || Time.timeScale != 1 || !Load)
             return;
 
         if(DestroyPreviewModels.Destroy != null)
@@ -205,6 +214,7 @@ public class Closet : MonoBehaviour, IInteractable
         CenterSpawnedObjects.Instance.ResourcesNames[ID] = null;
         CenterSpawnedObjects.Instance.ResourcesItems[ID] = null;
         CenterSpawnedObjects.Instance.ResourcesItemsSettings[ID] = null;
+        CenterSpawnedObjects.Instance.ResourcesItemsButteryID[ID] = null;
 
         Destroy(gameObject);
     }
@@ -216,7 +226,7 @@ public class Closet : MonoBehaviour, IInteractable
 
     public void LeftClick()
     {
-        if(boolDestroy || Time.timeScale != 1 || StartDelay > 0 || (DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) >= 2)
+        if(boolDestroy || Time.timeScale != 1 || !Load || (DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) >= 2)
             return;
 
         if(DestroyPreviewModels.Destroy != null)

@@ -116,6 +116,7 @@ public class ChoiceOfBuilding : MonoBehaviour
 
             if(ResourcesZero)
             {
+                LiftAnObject.Instance.StartTrableAnimator("Нехватка ресурсов");
                 Debug.Log("Бомжара!");
                 return;
             }
@@ -322,6 +323,10 @@ public class ChoiceOfBuilding : MonoBehaviour
 
     public void LoadResources(int i)
     {
+        if(CurrentPanel == 0 || CurrentPanel >= 6) return;
+
+        Debug.Log(CurrentPanel - 1);
+        
         Panels[CurrentPanel - 1].SetActive(true);
         Names[CurrentPanel - 1].text = AllID.BuildName[i];
         Images[CurrentPanel - 1].sprite = AllID.BuildSprite[i];

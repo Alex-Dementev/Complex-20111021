@@ -11,10 +11,10 @@ public class SystemsController : MonoBehaviour
     private bool ZeroOxygen;
     public float MinusOxygen;
     private bool InAOxygen;
-    private float CurrentSettingsBallon1;
-    private float CurrentSettingsBallon2;
-    private int CurrentIndexBallon1;
-    private int CurrentIndexBallon2;
+    private float CurrentSettingsBallon1 = 0;
+    private float CurrentSettingsBallon2 = 0;
+    private int CurrentIndexBallon1 = 0;
+    private int CurrentIndexBallon2 = 0;
     private float Ballon;
     private float Speed = 1.3f;
 
@@ -150,6 +150,7 @@ public class SystemsController : MonoBehaviour
                     CurrentSettingsBallon2 -= Amount;
                     CurrentSettingsBallon2 -= MinusOxygen * Time.deltaTime;
                     InventorySlots.Instance.SettingsSlots[54] = CurrentSettingsBallon2;
+                    InventorySlots.Instance.SlidersSlots[54].value = CurrentSettingsBallon2;
                 }
                 else if(CurrentIndexBallon1 != 0 && CurrentSettingsBallon1 >= 0.5f)
                 {
@@ -157,6 +158,7 @@ public class SystemsController : MonoBehaviour
                     CurrentSettingsBallon1 -= Amount;
                     CurrentSettingsBallon1 -= MinusOxygen * Time.deltaTime;
                     InventorySlots.Instance.SettingsSlots[53] = CurrentSettingsBallon1;
+                    InventorySlots.Instance.SlidersSlots[53].value = CurrentSettingsBallon1;
                 }
 
                 Oxygen += Amount;

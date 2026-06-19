@@ -48,6 +48,9 @@ public class InventoryPanel : MonoBehaviour
 
                 InventorySlots.Closet = null;
                 InventorySlots.UpdateCloset();
+                InventorySlots.ChangeButtery = false;
+                InventorySlots.ChangeButteryImage.color = new Color(73f/255f, 73f/255f, 73f/255f);
+
                 PauseController.Speed = 1;
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;

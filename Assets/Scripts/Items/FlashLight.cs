@@ -8,7 +8,9 @@ public class FlashLight : MonoBehaviour
     public InputActionAsset inputActions;
     private InputAction RBMAction;
 
-    private bool CanActive = true;
+    private AllID AllID;
+
+    private bool CanActive = false;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -17,11 +19,16 @@ public class FlashLight : MonoBehaviour
         var playerMap = inputActions.FindActionMap("Player");
         RBMAction = playerMap.FindAction("ПКМ");
         RBMAction.Enable();
+
+        AllID = InventorySlots.Instance.AllID;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(Time.timeScale <= 0.1f)
+            return;
+
         if(RBMAction.triggered)
         {
             if(CanActive)
@@ -29,7 +36,7 @@ public class FlashLight : MonoBehaviour
                 CanActive = false;
                 goLight.SetActive(false);
             }
-            else
+            else if(InventorySlots.Instance.SettingsSlots[0] >= 0.1f)
             {
                 CanActive = true;
                 goLight.SetActive(true);
@@ -39,6 +46,18 @@ public class FlashLight : MonoBehaviour
         }
 
         if(CanActive)
+        {
             Systems.Visibility?.Invoke(0.07f * Time.deltaTime);
+            InventorySlots.Instance.SettingsSlots[0] -= (Time.deltaTime * 0.3f); 
+            
+            InventorySlots.Instance.UpplyQuickAccess(0);
+            InventorySlots.Instance.UpplySlots(0);
+
+            if(InventorySlots.Instance.SettingsSlots[0] < 0.1f)
+            {
+                CanActive = false;
+                goLight.SetActive(false);
+            }
+        }
     }
 }

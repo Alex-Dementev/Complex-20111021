@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3207806049668941599}
   - component: {fileID: 1295597080886628760}
   m_Layer: 11
-  m_Name: "Hand\u041F\u0435\u0441\u0447\u0430\u043D\u0438\u043A"
+  m_Name: "Hand\u0420\u0435\u0437\u0438\u043D\u0430"
   m_TagString: Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8967818152265111323}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 1
@@ -66,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 89847aecc5ec48542ab75ae320e09b61, type: 2}
+  - {fileID: 2100000, guid: 357b6205bc834c743b4c8d3797427af9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

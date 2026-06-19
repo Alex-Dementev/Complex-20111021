@@ -26,7 +26,6 @@ public class StartSpawn : MonoBehaviour
                 obj.ObjectID = i;
                 obj.Spawned = true;
                 obj.ID = CenterSpawnedObjects.Instance.ResourcesTypes[i];
-                obj.AllID = AllID;
             }
         }
 
@@ -74,6 +73,22 @@ public class StartSpawn : MonoBehaviour
 
                         RefillOxygen.Spawned = true;
                         RefillOxygen.ID = i - CenterSpawnedObjects.IDSpawnedObjects;
+                        break;
+                    }
+                    case 3:
+                    {
+                        BackGroundObjects BackGroundObjects = Instantiate(AllID.BuildPrefab[CenterSpawnedObjects.Instance.ResourcesTypes[i]], CenterSpawnedObjects.Instance.ResourcesPositions[i], Quaternion.Euler(CenterSpawnedObjects.Instance.ResourcesRotations[i])).GetComponent<BackGroundObjects>();
+
+                        BackGroundObjects.Spawned = true;
+                        BackGroundObjects.ID = i - CenterSpawnedObjects.IDSpawnedObjects;
+                        break;
+                    }
+                    case 4:
+                    {
+                        ChargeButteriesBase ChargeButteriesBase = Instantiate(AllID.BuildPrefab[CenterSpawnedObjects.Instance.ResourcesTypes[i]], CenterSpawnedObjects.Instance.ResourcesPositions[i], Quaternion.Euler(CenterSpawnedObjects.Instance.ResourcesRotations[i])).GetComponent<ChargeButteriesBase>();
+
+                        ChargeButteriesBase.Spawned = true;
+                        ChargeButteriesBase.ID = i - CenterSpawnedObjects.IDSpawnedObjects;
                         break;
                     }
                 }

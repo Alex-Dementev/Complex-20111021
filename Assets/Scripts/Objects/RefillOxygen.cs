@@ -20,13 +20,12 @@ public class RefillOxygen : MonoBehaviour, IInteractable
     private int[] resource3 = new int[2];
     private int[] resource4 = new int[2];
 
-    private float StartDelay = 0.3f;
-
     
 
     public void UpdateState()
     {
         Load = true;
+
 
         if(!Spawned && CenterSpawnedObjects.Instance.ResourcesID[ID + CenterSpawnedObjects.IDSpawnedObjects] == 1)
         {
@@ -35,8 +34,19 @@ public class RefillOxygen : MonoBehaviour, IInteractable
             return;
         }
 
+        if(CenterSpawnedObjects.Instance.ResourcesItems[ID] == null)
+        {
+            CenterSpawnedObjects.Instance.ResourcesItems[ID] = new int[2];
+            CenterSpawnedObjects.Instance.ResourcesPositions[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.position;
+            CenterSpawnedObjects.Instance.ResourcesRotations[ID + CenterSpawnedObjects.IDSpawnedObjects] = transform.eulerAngles;
+        }
+
         RefillIndex = CenterSpawnedObjects.Instance.ResourcesItems[ID][0];
         RefillSettings = CenterSpawnedObjects.Instance.ResourcesItems[ID][1];
+        transform.position = CenterSpawnedObjects.Instance.ResourcesPositions[ID + CenterSpawnedObjects.IDSpawnedObjects];
+        transform.eulerAngles = CenterSpawnedObjects.Instance.ResourcesRotations[ID + CenterSpawnedObjects.IDSpawnedObjects];
+
+        Effect();
     }
 
     void Update()
@@ -54,15 +64,13 @@ public class RefillOxygen : MonoBehaviour, IInteractable
                 UpdateState();
 
             if(!OnSave && PauseController.InvisibleOperations && Load)
-                UpdateCloset();
+                UpdateSave();
             else if(!PauseController.InvisibleOperations)
                 OnSave = false;
         }
-
-        StartDelay -= Time.deltaTime;
     }
 
-    public void UpdateCloset()
+    public void UpdateSave()
     {
         OnSave = true;
 
@@ -83,7 +91,7 @@ public class RefillOxygen : MonoBehaviour, IInteractable
             return;
         }
 
-        if(boolDestroy || Time.timeScale != 1 || StartDelay > 0)
+        if(boolDestroy || Time.timeScale != 1 || !Load)
             return;
 
         if(DestroyPreviewModels.Destroy != null)
@@ -146,9 +154,7 @@ public class RefillOxygen : MonoBehaviour, IInteractable
         CenterSpawnedObjects.Instance.ResourcesRotations[ID + CenterSpawnedObjects.IDSpawnedObjects] = new Vector3(0, 0, 0);
         CenterSpawnedObjects.Instance.ResourcesTypes[ID + CenterSpawnedObjects.IDSpawnedObjects] = 0;
 
-        CenterSpawnedObjects.Instance.ResourcesNames[ID] = null;
         CenterSpawnedObjects.Instance.ResourcesItems[ID] = null;
-        CenterSpawnedObjects.Instance.ResourcesSettings[ID] = 0;
 
         Destroy(gameObject);
     }
@@ -163,7 +169,7 @@ public class RefillOxygen : MonoBehaviour, IInteractable
 
     public void LeftClick()
     {
-        if(boolDestroy || Time.timeScale != 1 || StartDelay > 0 || (DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) >= 2)
+        if(boolDestroy || Time.timeScale != 1 || !Load || (DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) >= 2)
             return;
 
         if(DestroyPreviewModels.Destroy != null)
@@ -182,6 +188,8 @@ public class RefillOxygen : MonoBehaviour, IInteractable
                 {
                     InventorySlots.Instance.IndexSlots[i] = RefillIndex;
                     InventorySlots.Instance.SettingsSlots[i] = RefillSettings;
+                    InventorySlots.Instance.UpplyQuickAccess(i);
+                    InventorySlots.Instance.UpplySlots(i);
                     foundSlot = true;
                     break;
                 }
@@ -215,6 +223,9 @@ public class RefillOxygen : MonoBehaviour, IInteractable
                 InventorySlots.Instance.SettingsSlots[0] = 0;
                 CenterSpawnedObjects.Instance.ResourcesItems[ID][0] = RefillIndex;
                 CenterSpawnedObjects.Instance.ResourcesItems[ID][1] = (int)RefillSettings;
+
+                InventorySlots.Instance.UpplyQuickAccess(0);
+                InventorySlots.Instance.UpplySlots(0);
 
                 Debug.Log("Заправка кислорода!");
             }

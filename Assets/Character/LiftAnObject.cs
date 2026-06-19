@@ -81,7 +81,21 @@ public class LiftAnObject : MonoBehaviour
 
             if (IInteractable != null)
             {
-                NameObject.text = IInteractable.GetName();
+                if(IInteractable.GetName() == "null")
+                {
+                    if(AnimatorController)
+                    {
+                        AnimatorController = false;
+                        AnimatorNameObject.CrossFade("End", 0.2f);
+                        return;
+                    }
+                    else
+                        return;
+                }
+                else
+                {
+                    NameObject.text = IInteractable.GetName();
+                }
 
                 if(!AnimatorController)
                 {

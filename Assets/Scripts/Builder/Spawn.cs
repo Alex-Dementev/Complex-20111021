@@ -29,6 +29,11 @@ public class Spawn : MonoBehaviour
             if(InventorySlots.Instance.IndexSlots[i] == Resource[0])
             {
                 InventorySlots.Instance.IndexSlots[i] = 0;
+                InventorySlots.Instance.SettingsSlots[i] = 0;
+
+                if(i < 7)
+                    InventorySlots.Instance.UpplyQuickAccess(i);
+                InventorySlots.Instance.UpplySlots(i);
 
                 count++;
 
@@ -104,7 +109,6 @@ public class Spawn : MonoBehaviour
             case 0:
             {
                 var closet = obj.GetComponent<Closet>();
-                CenterSpawnedObjects.Instance.ResourcesItems[ObjectID] = new int[24];
 
                 closet.Spawned = true;
                 closet.ClosetType = 0;
@@ -112,12 +116,13 @@ public class Spawn : MonoBehaviour
 
                 closet.TotalSlots = 24;
                 closet.Slots = new int[24];
+                closet.Settings = new float[24];
+                closet.ButteryID = new int[24];
                 return;
             }
             case 1:
             {
                 var closet = obj.GetComponent<Closet>();
-                CenterSpawnedObjects.Instance.ResourcesItems[ObjectID] = new int[12];
 
                 closet.Spawned = true;
                 closet.ClosetType = 1;
@@ -125,16 +130,32 @@ public class Spawn : MonoBehaviour
 
                 closet.TotalSlots = 12;
                 closet.Slots = new int[12];
+                closet.Settings = new float[12];
+                closet.ButteryID = new int[12];
                 return;
             }
             case 2:
             {
                 var RefillOxygen = obj.GetComponent<RefillOxygen>();
 
-                CenterSpawnedObjects.Instance.ResourcesItems[ObjectID] = new int[2];
-
                 RefillOxygen.Spawned = true;
                 RefillOxygen.ID = ObjectID;
+                return;
+            }
+            case 3:
+            {
+                var BackGroundObjects = obj.GetComponent<BackGroundObjects>();
+
+                BackGroundObjects.Spawned = true;
+                BackGroundObjects.ID = ObjectID;
+                return;
+            }
+            case 4:
+            {
+                var ChargeButteriesBase = obj.GetComponent<ChargeButteriesBase>();
+
+                ChargeButteriesBase.Spawned = true;
+                ChargeButteriesBase.ID = ObjectID;
                 return;
             }
         }

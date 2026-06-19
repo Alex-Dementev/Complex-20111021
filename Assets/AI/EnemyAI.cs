@@ -12,7 +12,7 @@ public class EnemyAI : MonoBehaviour
     public Animator animHead;
     private Rigidbody rb;
 
-    public string Biome;
+    private string Biome = "Biome02";
 
     public AudioSource AudioSource;
 
@@ -266,39 +266,41 @@ public class EnemyAI : MonoBehaviour
 
     private bool DetectPlayer()
     {
-        Collider[] cols = Physics.OverlapSphere(playerTransform.position, 0.5f);
+        bool b = false;
 
-        foreach (var col in cols)
+        for(int i = 0; i < CurrentBiome.CurrentsBioms.Length; i++)
         {
-            if (col.gameObject.layer == LayerMask.NameToLayer(Biome))
-            {
-                Vector3 toPlayer = playerTransform.position - transform.position;
+            if(CurrentBiome.CurrentsBioms[i] == Biome)
+                b = true;
+        }
 
-                // Слышит рядом
-                if (toPlayer.sqrMagnitude <= 13f * 13f)
-                    return true;
+        if(!b)
+            return false;
 
-                // Видит впереди
-                float viewDistance = 18f;
 
-                if (toPlayer.sqrMagnitude > viewDistance * viewDistance)
-                    return false;
+        Vector3 toPlayer = playerTransform.position - transform.position;
 
-                float angle = Vector3.Angle(transform.forward, toPlayer);
+        // Слышит рядом
+        if (toPlayer.sqrMagnitude <= 13f * 13f)
+            return true;
 
-                if (angle > 70f) // половина от 120°
-                    return false;
+        // Видит впереди
+        float viewDistance = 18f;
 
-                Vector3 start = transform.position + Vector3.up;
-                Vector3 end = playerTransform.position + Vector3.up;
+        if (toPlayer.sqrMagnitude > viewDistance * viewDistance)
+            return false;
 
-                if (Physics.Raycast(start, (end - start).normalized, out RaycastHit hit, viewDistance))
-                {
-                    return hit.transform == playerTransform;
-                }
+        float angle = Vector3.Angle(transform.forward, toPlayer);
 
-                return false;
-            }
+        if (angle > 70f) // половина от 120°
+            return false;
+
+        Vector3 start = transform.position + Vector3.up;
+        Vector3 end = playerTransform.position + Vector3.up;
+
+        if (Physics.Raycast(start, (end - start).normalized, out RaycastHit hit, viewDistance))
+        {
+            return hit.transform == playerTransform;
         }
 
         return false;

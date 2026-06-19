@@ -36,15 +36,21 @@ public class ModuleThrowOut
             CenterSpawnedObjects.Instance.ResourcesPositions[objectID] = pos;
             CenterSpawnedObjects.Instance.ResourcesTypes[objectID] = id;
             CenterSpawnedObjects.Instance.ResourcesSettings[objectID] = inv.SettingsSlots[inv.CurrentSlot];
+            CenterSpawnedObjects.Instance.ResourcesButteryID[objectID] = inv.ButteryIDSlots[inv.CurrentSlot];
 
             obj.ObjectID = objectID;
             obj.Spawned = true;
             obj.ID = id;
-            obj.AllID = inv.AllID;
+            obj.ButteryID = inv.ButteryIDSlots[inv.CurrentSlot];
             obj.Settings = inv.SettingsSlots[inv.CurrentSlot];
 
             inv.IndexSlots[inv.CurrentSlot] = 0;
             inv.SettingsSlots[inv.CurrentSlot] = 0;
+            inv.ButteryIDSlots[inv.CurrentSlot] = 0;
+
+            if(inv.CurrentSlot < 7)
+                inv.UpplyQuickAccess(inv.CurrentSlot);
+            inv.UpplySlots(inv.CurrentSlot);
 
             if(inv.Closet != null)
                 inv.Closet.Slots[inv.CurrentSlot - 28] = 0;
@@ -54,6 +60,11 @@ public class ModuleThrowOut
         else
         {
             var inv = InventorySlots.Instance;
+
+            inv.SpawnedID = inv.IndexSlots[0];
+
+            if(inv.SpawnedID == 0)
+                return;
 
             pos = new Vector3(inv.SpawnPos.position.x + Random.Range(-0.1f, 0.1f), inv.SpawnPos.position.y + 0.4f, inv.SpawnPos.position.z + 0.3f);
 
@@ -71,21 +82,25 @@ public class ModuleThrowOut
             if(objectID == -1)
                 return;
 
-            Objects obj = Object.Instantiate(inv.AllID.Prefab[inv.SpawnedID], pos, Quaternion.identity);
+            Objects obj = Object.Instantiate(inv.AllID.Prefab[inv.SpawnedID], pos, Quaternion.identity).GetComponent<Objects>();
 
             CenterSpawnedObjects.Instance.ResourcesID[objectID] = 1;
             CenterSpawnedObjects.Instance.ResourcesPositions[objectID] = pos;
             CenterSpawnedObjects.Instance.ResourcesTypes[objectID] = inv.SpawnedID;
             CenterSpawnedObjects.Instance.ResourcesSettings[objectID] = inv.SettingsSlots[0];
+            CenterSpawnedObjects.Instance.ResourcesButteryID[objectID] = inv.ButteryIDSlots[0];
 
             obj.ObjectID = objectID;
             obj.Spawned = true;
             obj.ID = inv.SpawnedID;
-            obj.AllID = inv.AllID;
+            obj.ButteryID = inv.ButteryIDSlots[0];
             obj.Settings = inv.SettingsSlots[0];
 
             inv.IndexSlots[0] = 0;
             inv.SettingsSlots[0] = 0;
+            inv.ButteryIDSlots[0] = 0;
+            inv.UpplySlots(0);
+            inv.UpplyQuickAccess(0);
             
 
             Rigidbody rb = obj.GetComponent<Rigidbody>();
@@ -104,6 +119,9 @@ public class ModuleThrowOut
             {
                 inv.IndexSlots[i] = inv.SpawnedID;
                 inv.SettingsSlots[i] = inv.AllID.Settings[inv.SpawnedID];
+                if(i < 7)
+                    inv.UpplyQuickAccess(i);
+                inv.UpplySlots(i);
                 return;
             }
         }
@@ -129,12 +147,10 @@ public class ModuleThrowOut
         CenterSpawnedObjects.Instance.ResourcesID[objectID] = 1;
         CenterSpawnedObjects.Instance.ResourcesPositions[objectID] = pos;
         CenterSpawnedObjects.Instance.ResourcesTypes[objectID] = inv.SpawnedID;
-        CenterSpawnedObjects.Instance.ResourcesSettings[objectID] = inv.AllID.Settings[inv.SpawnedID];
 
         obj.ObjectID = objectID;
         obj.Spawned = true;
         obj.ID = inv.SpawnedID;
-        obj.AllID = inv.AllID;
         obj.Settings = inv.AllID.Settings[inv.SpawnedID];
     }
 }

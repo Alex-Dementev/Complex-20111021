@@ -242,8 +242,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fdd51d245a885640a575c6086c392c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Objects
-  ID: 3
+  ID: 50
   ObjectID: 16
   Name: 
   AllID: {fileID: 0}
   Spawned: 0
+  Settings: 0

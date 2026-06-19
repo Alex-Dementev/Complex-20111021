@@ -8,20 +8,24 @@ public class CenterSpawnedObjects : MonoBehaviour
     public static CenterSpawnedObjects Instance;
 
 
-    public const int IDNotSpawnedObjects = 4500;
+    public const int IDNotSpawnedObjects = 1500;
     public const int IDSpawnedObjects = 12000;
     public const int IDNotSpawnedBuilds = 13000;
     public const int IDSpawnedBuilds = 17000;
 
 
-    public int[] ResourcesID = new int[17000];
-    public float[] ResourcesSettings = new float[17000];
-    public Vector3[] ResourcesPositions = new Vector3[17000];
-    public Vector3[] ResourcesRotations = new Vector3[17000];
-    public int[] ResourcesTypes = new int[17000];
-    public int[][] ResourcesItems = new int[5000][];
-    public string[] ResourcesNames = new string[5000];
-    public float[][] ResourcesItemsSettings = new float[5000][];
+    public int[] ResourcesID = new int[19000]; //общие ID
+    public float[] ResourcesSettings = new float[17000]; //общие настройки
+    public Vector3[] ResourcesPositions = new Vector3[19000]; //общие позиции
+    public Vector3[] ResourcesRotations = new Vector3[19000]; //общие вращения
+    public int[] ResourcesTypes = new int[17000]; //общие типы
+    public int[][] ResourcesItems = new int[5000][]; //зубчатый массив построек
+    public string[] ResourcesNames = new string[5000]; //названия построек
+    public float[][] ResourcesItemsSettings = new float[5000][]; //зубчатый массив построек
+    public int[] BiomeSpawned = new int[200]; //биом спавненных предметов
+    public int[] ResourcesButteryID = new int[17000];
+    public int[][] ResourcesItemsButteryID = new int[5000][]; //зубчатый массив построек
+    public Vector3[] EnemyPoint = new Vector3[2000]; //общие вращения
 
 
     public static bool Load;
@@ -116,6 +120,30 @@ public class CenterSpawnedObjects : MonoBehaviour
         }
         sb.Append('\n'); 
 
+        sb.Append(string.Join("|", BiomeSpawned)).Append('\n');
+
+        sb.Append(string.Join("|", ResourcesButteryID)).Append('\n');
+
+        for (int i = 0; i < ResourcesItemsButteryID.Length; i++)
+        {
+            if (ResourcesItemsButteryID[i] != null && ResourcesItemsButteryID[i].Length > 0)
+            {
+                sb.Append(string.Join(" ", ResourcesItemsButteryID[i]));
+            }
+            if (i < ResourcesItemsButteryID.Length - 1) sb.Append("|");
+        }
+        sb.Append('\n');
+
+        for (int i = 0; i < EnemyPoint.Length; i++)
+        {
+            Vector3 pos = EnemyPoint[i];
+            sb.Append(pos.x.ToString(CultureInfo.InvariantCulture)).Append(';')
+              .Append(pos.y.ToString(CultureInfo.InvariantCulture)).Append(';')
+              .Append(pos.z.ToString(CultureInfo.InvariantCulture));
+            if (i < EnemyPoint.Length - 1) sb.Append("|");
+        }
+        sb.Append('\n');  
+
         try
         {
             File.WriteAllText(tempPath, sb.ToString());
@@ -141,14 +169,18 @@ public class CenterSpawnedObjects : MonoBehaviour
 
         if (!File.Exists(path))
         {
-            ResourcesID = new int[17000];
+            ResourcesID = new int[19000];
             ResourcesSettings = new float[17000];
             ResourcesTypes = new int[17000];
-            ResourcesPositions = new Vector3[17000];
-            ResourcesRotations = new Vector3[17000]; 
+            ResourcesPositions = new Vector3[19000];
+            ResourcesRotations = new Vector3[19000]; 
             ResourcesItems = new int[5000][];
             ResourcesItemsSettings = new float[5000][];
             ResourcesNames = new string[5000];
+            BiomeSpawned = new int[200];
+            ResourcesButteryID = new int[17000];
+            ResourcesItemsButteryID = new int[5000][];
+            EnemyPoint = new Vector3[2000];
             Debug.Log("CSO: Новые массивы (нет файла сохранений)");
             Load = true;
             return; 
@@ -156,10 +188,8 @@ public class CenterSpawnedObjects : MonoBehaviour
 
         string[] lines = File.ReadAllLines(path);
         
-        if (lines.Length < 8) 
-        {
+        if (lines.Length < 11) 
             return;
-        }
 
         // --- 1. Парсинг IDs ---
         string[] idSplit = lines[0].Split('|');
@@ -293,6 +323,69 @@ public class CenterSpawnedObjects : MonoBehaviour
             {
                 ResourcesItemsSettings[i] = new float[0];
             }
+        }
+
+        string[] biomeSplit = lines[8].Split('|');
+        for (int i = 0; i < BiomeSpawned.Length; i++)
+        {
+            BiomeSpawned[i] = (i < biomeSplit.Length && !string.IsNullOrEmpty(biomeSplit[i])) ? int.Parse(biomeSplit[i]) : 0;
+        }
+
+        string[] ResourcesButteryIDSplit = lines[9].Split('|');
+        for (int i = 0; i < ResourcesButteryID.Length; i++)
+        {
+            ResourcesButteryID[i] = (i < ResourcesButteryIDSplit.Length && !string.IsNullOrEmpty(ResourcesButteryIDSplit[i])) ? int.Parse(ResourcesButteryIDSplit[i]) : 0;
+        }
+
+        string[] itemsButteryIDSplit = lines[10].Split('|');
+        ResourcesItemsButteryID = new int[5000][];
+
+        for (int i = 0; i < ResourcesItemsButteryID.Length; i++)
+        {
+            // Если в файле есть данные для этого индекса и они не пустые
+            if (i < itemsButteryIDSplit.Length && !string.IsNullOrWhiteSpace(itemsButteryIDSplit[i]))
+            {
+                string trimmedLine = itemsButteryIDSplit[i].Trim();
+                
+                if (string.IsNullOrEmpty(trimmedLine))
+                {
+                    // Нам похуй какой тип шкафа, если в сейве пусто, 
+                    // просто даем ему временный пустой массив, Closet сам его расширит под себя!
+                    ResourcesItemsButteryID[i] = null; 
+                    continue;
+                }
+
+                string[] singleContainerItems = trimmedLine.Split(' ');
+                ResourcesItemsButteryID[i] = new int[singleContainerItems.Length];
+
+                for (int j = 0; j < singleContainerItems.Length; j++)
+                {
+                    ResourcesItemsButteryID[i][j] = int.Parse(singleContainerItems[j]);
+                }
+            }
+            else
+            {
+                ResourcesItemsButteryID[i] = new int[0];
+            }
+        }
+
+        string[] pointSplit = lines[11].Split('|');
+        for (int i = 0; i < EnemyPoint.Length; i++)
+        {
+            if (i < pointSplit.Length && !string.IsNullOrEmpty(posSplit[i]))
+            {
+                string[] xyz = pointSplit[i].Split(';');
+                if (xyz.Length >= 3)
+                {
+                    EnemyPoint[i] = new Vector3(
+                        float.Parse(xyz[0], CultureInfo.InvariantCulture),
+                        float.Parse(xyz[1], CultureInfo.InvariantCulture),
+                        float.Parse(xyz[2], CultureInfo.InvariantCulture)
+                    );
+                }
+                else EnemyPoint[i] = Vector3.zero;
+            }
+            else EnemyPoint[i] = Vector3.zero;
         }
         
         Load = true;
