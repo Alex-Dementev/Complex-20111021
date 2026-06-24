@@ -10,7 +10,7 @@ public class FlashLight : MonoBehaviour
 
     private AllID AllID;
 
-    private bool CanActive = false;
+    private bool CanActive = true;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

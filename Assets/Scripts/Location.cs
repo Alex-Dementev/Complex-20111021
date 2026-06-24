@@ -5,8 +5,9 @@ public class LocationToRevive : MonoBehaviour
     public Vector3 TransportLocation;
     private bool InTrigger;
     public Transform TransformEmpty;
-    public CharacterContorller CharacterContorller;
+    public CharacterController CharacterController;
     public bool IsABase;
+    public string BaseName;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -21,7 +22,7 @@ public class LocationToRevive : MonoBehaviour
 
             if(IsABase)
             {
-                CharacterContorller.RevivePosition = TransformEmpty.position;
+                CharacterController.RevivePosition = TransformEmpty.position;
             }
         }
     }
@@ -37,12 +38,12 @@ public class LocationToRevive : MonoBehaviour
     private void OnDestroy()
     {
         TransportLocation = new Vector3(0, 0, 0);
-        CharacterContorller.RevivePosition = TransportLocation;
+        CharacterController.RevivePosition = TransportLocation;
     }
 
     public void InOut()
     {
-        CharacterContorller.RevivePosition = TransformEmpty.position;
+        CharacterController.RevivePosition = TransformEmpty.position;
         Debug.Log("Сохранение позиции для возрождения!");
     }
 }

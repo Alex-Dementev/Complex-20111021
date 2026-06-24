@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 
-public class CharacterContorller : MonoBehaviour
+public class CharacterController : MonoBehaviour
 {
     [Header("Input")]
     public InputActionAsset inputActions;
@@ -60,6 +60,8 @@ public class CharacterContorller : MonoBehaviour
     [Header("Mouse")]
     private float mouseSensitivity = 100f;
     public float maxLookAngle = 80f;
+    private float tiltSpeed = 4f;
+    private float currentZRotation;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -78,7 +80,13 @@ public class CharacterContorller : MonoBehaviour
     public bool isSprinting;
     private bool OldSwim;
 
+    public static Transform PlayerTransform;
+
     public Vector3 RevivePosition;
+
+    private string BaseName = "Дом Гернольда";
+    private bool Repetition;
+
 
     void Awake()
     {
@@ -104,6 +112,7 @@ public class CharacterContorller : MonoBehaviour
 
     void Start()
     {
+        PlayerTransform = transform;
         RenderSettings.fog = true;
         rb = GetComponent<Rigidbody>();
         capsule = GetComponent<CapsuleCollider>();
@@ -255,7 +264,7 @@ public class CharacterContorller : MonoBehaviour
         }
         else Systems.Oxygen?.Invoke(1f);
 
-        Systems.InAOxygen?.Invoke(InAOxygen());
+        Systems.InAOxygen?.Invoke(InAOxygen(), BaseName, Repetition);
     }
 
     void FixedUpdate()
@@ -399,9 +408,34 @@ public class CharacterContorller : MonoBehaviour
     {
         float mx = lookInput.x * mouseSensitivity * Time.deltaTime;
         float my = lookInput.y * mouseSensitivity * Time.deltaTime;
+
         xRotation -= my;
         xRotation = Mathf.Clamp(xRotation, -maxLookAngle, maxLookAngle);
-        cameraPivot.localRotation = Quaternion.Euler(xRotation, 0, 0);
+
+        float tilt = 0;
+        tiltSpeed = 4f;
+
+        if(mx > 0)
+        {
+            tilt = -1;
+
+            if(currentZRotation > 0)
+                tiltSpeed = 15f;
+        }
+        else if(mx < 0)
+        {
+            tilt = 1;
+
+            if(currentZRotation < 0)
+                tiltSpeed = 15f;
+        }
+        
+        if(Swim)
+            currentZRotation = Mathf.MoveTowards(currentZRotation, tilt * 30f, Time.deltaTime * tiltSpeed * 1.5f);
+        else
+            currentZRotation = Mathf.MoveTowards(currentZRotation, tilt * 5f, Time.deltaTime * tiltSpeed);
+
+        cameraPivot.localRotation = Quaternion.Euler(xRotation, 0, currentZRotation);
         transform.Rotate(Vector3.up * mx);
     }
     void CheckGround()
@@ -467,7 +501,24 @@ public class CharacterContorller : MonoBehaviour
         Vector3 point1 = transform.position + Vector3.up * (capsule.height / 2f - capsule.radius);
         Vector3 point2 = transform.position - Vector3.up * (capsule.height / 2f - capsule.radius);
 
-        return Physics.CheckCapsule(point1, point2, capsule.radius, LayerMask.GetMask("Oxygen"));
+        Collider[] colliders = Physics.OverlapCapsule(point1, point2, capsule.radius, LayerMask.GetMask("Oxygen"));
+
+        foreach (Collider col in colliders)
+        {
+            LocationToRevive LocationToRevive = col.GetComponent<LocationToRevive>();
+
+            if (LocationToRevive != null)
+            {
+                if(BaseName == LocationToRevive.BaseName) Repetition = true;
+                else Repetition = false;
+                BaseName = LocationToRevive.BaseName;
+                return true;
+            }
+        }
+
+        BaseName = "";
+        
+        return false;
     }
 
 

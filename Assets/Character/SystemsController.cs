@@ -17,6 +17,8 @@ public class SystemsController : MonoBehaviour
     private int CurrentIndexBallon2 = 0;
     private float Ballon;
     private float Speed = 1.3f;
+    public Text BaseNameText;
+    public Animator BaseNameAnimator;
 
 
 
@@ -313,9 +315,17 @@ public class SystemsController : MonoBehaviour
     {
         MinusOxygen = vOxygen;
     }
-    private void VoidInAOxygen(bool vInAOxygen)
+    private void VoidInAOxygen(bool vInAOxygen, string BaseName, bool Repetition)
     {
         InAOxygen = vInAOxygen;
+
+        if(Repetition) return;
+
+        if(InAOxygen)
+        {
+            BaseNameText.text = BaseName;
+            BaseNameAnimator.CrossFade("Start", 0.2f);
+        }
     }
 
 
@@ -342,7 +352,7 @@ public static class Systems
     public static System.Action<float> Visibility;
     public static System.Action<float> Oxygen;
     public static System.Action<int> Heals;
-    public static System.Action<bool> InAOxygen;
+    public static System.Action<bool, string, bool> InAOxygen;
 
     public static System.Action<int> VisibilityLevel;
 }

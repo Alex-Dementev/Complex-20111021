@@ -12,6 +12,7 @@ public class CenterSpawnedObjects : MonoBehaviour
     public const int IDSpawnedObjects = 12000;
     public const int IDNotSpawnedBuilds = 13000;
     public const int IDSpawnedBuilds = 17000;
+    public const int IDNotSpawnedEnemies = 19000;
 
 
     public int[] ResourcesID = new int[19000]; //общие ID
@@ -201,7 +202,7 @@ public class CenterSpawnedObjects : MonoBehaviour
         string[] settingsSplit = lines[1].Split('|');
         for (int i = 0; i < ResourcesSettings.Length; i++)
         {
-            ResourcesSettings[i] = (i < settingsSplit.Length && !string.IsNullOrEmpty(settingsSplit[i])) ? int.Parse(settingsSplit[i]) : 0;
+            ResourcesSettings[i] = (i < settingsSplit.Length && !string.IsNullOrEmpty(settingsSplit[i])) ? float.Parse(settingsSplit[i]) : 0;
         }
 
         // --- 2. Парсинг Types ---
@@ -274,7 +275,7 @@ public class CenterSpawnedObjects : MonoBehaviour
         }
         // --- 6. Парсинг Ротаций ---
         string[] rotSplit = lines[6].Split('|');
-        ResourcesRotations = new Vector3[17000];
+        ResourcesRotations = new Vector3[19000];
         for (int i = 0; i < ResourcesRotations.Length; i++)
         {
             if (i < rotSplit.Length && !string.IsNullOrEmpty(rotSplit[i]))
@@ -316,7 +317,7 @@ public class CenterSpawnedObjects : MonoBehaviour
 
                 for (int j = 0; j < singleContainerItems.Length; j++)
                 {
-                    ResourcesItemsSettings[i][j] = int.Parse(singleContainerItems[j]);
+                    ResourcesItemsSettings[i][j] = float.Parse(singleContainerItems[j]);
                 }
             }
             else
