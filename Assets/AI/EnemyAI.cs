@@ -8,21 +8,12 @@ public class EnemyAI : MonoBehaviour
     public Transform playerTransform;
     public Transform ObjectTransform;
     private NavMeshAgent agent;
-    public Animator animBody;
     public Animator animHead;
-    private Rigidbody rb;
 
     private string Biome = "Biome02";
 
     public AudioSource AudioSource;
 
-    [Header("Jump Settings")]
-    public float jumpForwardForce;
-    public float jumpUpForce;
-    public float checkDistance;
-    public LayerMask groundMask;
-
-    private float WaitingJump;
     private float Waiting;
     private int IsAttached;
     private bool isWaitingWalk = false;
@@ -34,21 +25,18 @@ public class EnemyAI : MonoBehaviour
     private float DelayScream;
     private float DelayRoar;
 
-    private int stateAnimBody;
-    private int oldStateAnimBody;
-
     public int ID;
 
     private bool Saved = true;
     private bool Load;
 
+    public LayerMask groundMask;
+
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        rb = GetComponent<Rigidbody>();
         PlayerRb = playerTransform.GetComponent<Rigidbody>();
-        rb.isKinematic = true;
 
         DelayScream = Random.Range(16, 55);
         DelayRoar = Random.Range(4, 10);
@@ -89,7 +77,6 @@ public class EnemyAI : MonoBehaviour
     void Update()
     {
         DelayScream -= Time.deltaTime;
-        WaitingJump -= Time.deltaTime;
         Waiting -= Time.deltaTime;
 
 
@@ -118,33 +105,6 @@ public class EnemyAI : MonoBehaviour
         else return;
 
 
-        if(stateAnimBody != oldStateAnimBody)
-        {
-            oldStateAnimBody = stateAnimBody;
-
-            switch(stateAnimBody)
-            {
-                case 0:
-                    animBody.CrossFade("Idle", 0.1f);
-                    break;
-                case 1:
-                    animBody.CrossFade("Jump", 0.1f);
-                    break;
-                case 2:
-                    animBody.CrossFade("Walk", 0.1f);
-                    break;
-                case 3:
-                    animBody.CrossFade("Run", 0.1f);
-                    break;
-            }
-        }
-
-
-        if (CheckForUpcomingCliff() && !isWaitingWalk)
-        {
-            JumpPush();
-        }
-
         AlignToGround();
         
 
@@ -152,8 +112,7 @@ public class EnemyAI : MonoBehaviour
         {
             if(DetectPlayer() && CanReachPlayer())
             {
-                agent.SetDestination(playerTransform.position);
-                stateAnimBody = 3;
+                agent.SetDestination(playerTransform.position);;
                 Systems.Visibility?.Invoke(0.06f * Time.deltaTime);
             }
             else if(!DetectPlayer())
@@ -173,7 +132,6 @@ public class EnemyAI : MonoBehaviour
             else
             {
                 DelayRoar -= Time.deltaTime;
-                stateAnimBody = 0;
 
                 if(DelayRoar <= 0)
                 {
@@ -193,7 +151,6 @@ public class EnemyAI : MonoBehaviour
             agent.enabled = false;
             IsAttached = 1;
             Systems.Visibility?.Invoke(0.3f);
-            stateAnimBody = 0;
             animHead.CrossFade("Attack", 0.1f);
         }
         if(Waiting <= 0.8f && IsAttached == 1)
@@ -250,7 +207,6 @@ public class EnemyAI : MonoBehaviour
 
     IEnumerator WaitAndMove()
     {
-        stateAnimBody = 0;
         isWaitingWalk = true;
 
         yield return new WaitForSeconds(2f);
@@ -261,24 +217,10 @@ public class EnemyAI : MonoBehaviour
     }
 
 
-    private bool CheckForUpcomingCliff()
-    {
-        Vector3 rayStart = transform.position + Vector3.up * 0.5f;
-        
-        Vector3 rayDirection = (transform.forward * 1.0f) + (Vector3.down * 2.0f);
-        rayDirection.Normalize();
-
-        bool hitGround = Physics.Raycast(rayStart, rayDirection, checkDistance, groundMask);
-        Debug.DrawRay(rayStart, rayDirection * checkDistance, hitGround ? Color.green : Color.red);
-
-        return !hitGround;
-    }
-
     void MoveToNewPoint()
     {
         Vector3 point = GetRandomPointInBiome();
         agent.SetDestination(point);
-        stateAnimBody = 2;
         CenterSpawnedObjects.Instance.EnemyPoint[ID] = point;
     }
 
@@ -309,7 +251,6 @@ public class EnemyAI : MonoBehaviour
                 {
                     if (col.gameObject.layer == LayerMask.NameToLayer(Biome))
                     {
-                        stateAnimBody = 2;
                         return hit.position;
                     }
                 }
@@ -359,38 +300,5 @@ public class EnemyAI : MonoBehaviour
         }
 
         return false;
-    }
-
-
-    private void JumpPush()
-    {
-        if(agent.enabled && WaitingJump <= 0)
-        {
-            agent.enabled = false;
-            rb.isKinematic = false;
-
-            Vector3 pushDirection = transform.forward * jumpForwardForce + Vector3.up * jumpUpForce;
-            rb.AddForce(pushDirection, ForceMode.Impulse);
-
-            stateAnimBody = 1;
-
-            WaitingJump = 0.15f;
-        }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if(agent.enabled || WaitingJump >= 0)
-            return;
-
-
-        if (!agent.enabled && ((1 << collision.gameObject.layer) & groundMask) != 0)
-        {
-            rb.linearVelocity = Vector3.zero;
-            rb.isKinematic = true;
-            WaitingJump = 0.05f;
-            agent.enabled = true;
-            stateAnimBody = 2;
-        }
     }
 }

@@ -73,7 +73,7 @@ public class AudioManager : MonoBehaviour
         }
 
         
-        if (!Song.isPlaying && Paused == 0)
+        if (Paused == 0 && Song.clip != null && Song.time >= Song.clip.length - 0.1f)
         {
             if(Song.clip == SongClips[0])
             {

@@ -35,6 +35,7 @@ public class HandItemSpawner : MonoBehaviour
         
         if(InventorySlots.Instance.IndexSlots[0] != OldIndex)
         {
+            OldIndex = InventorySlots.Instance.IndexSlots[0];
             ChangeAnimator.CrossFade("Change", 0.05f);
         }
 
@@ -52,8 +53,6 @@ public class HandItemSpawner : MonoBehaviour
 
     public void VoidChange()
     {
-        OldIndex = InventorySlots.Instance.IndexSlots[0];
-
         DestroyObject();
 
         if(InventorySlots.Instance.IndexSlots[0] <= 0)

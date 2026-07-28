@@ -15,7 +15,7 @@ public class ChargeButtery : MonoBehaviour, IInteractable
         if(buttery.AllID.Settings[buttery.ButteryIndex[ID]] != 0)
             return buttery.AllID.SettingsStrings[buttery.ButteryIndex[ID]] + ": " + (int)buttery.ButterySettings[ID] + "/" + buttery.AllID.Settings[buttery.ButteryIndex[ID]];
         else
-            return "Пусто";
+            return "Пустой слот";
     }
 
     public void LeftClick()

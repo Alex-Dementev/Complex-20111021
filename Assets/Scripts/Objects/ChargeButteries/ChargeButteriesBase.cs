@@ -174,7 +174,7 @@ public class ChargeButteriesBase : MonoBehaviour, IInteractable
 
     public string GetName()
     {
-        return "Зарядка батарей";
+        return "Зарядная станция";
     }
 
     public void LeftClickToSlot(int LeftClickToCurrentSlot = 0) {CurrentSlot = LeftClickToCurrentSlot; ClickToSlot = true; LeftClick();}

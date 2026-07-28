@@ -164,7 +164,7 @@ public class RefillOxygen : MonoBehaviour, IInteractable
         if(RefillIndex >= AllID.Items && RefillIndex < AllID.Ballons)
             return "Кислород: " + (int)RefillSettings + "/" + AllID.Settings[RefillIndex];
         else
-            return "Пусто";
+            return "Пусто. Вставьте баллон";
     }
 
     public void LeftClick()

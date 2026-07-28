@@ -99,13 +99,10 @@ public class InventorySlots : MonoBehaviour
                 ButteryIDSlots[i] = 0;
             }
 
-            if(SlidersSlots[i] != null)
-            {
-                if(i < 7)
-                    UpplyQuickAccess(i);
+            if(i < 7)
+                UpplyQuickAccess(i);
                     
-                UpplySlots(i);
-            }
+            UpplySlots(i);
         }
 
         if(OldIndexBackpack != IndexSlots[52])
@@ -623,6 +620,9 @@ public class InventorySlots : MonoBehaviour
                 IndexSlots[d] = 0;
                 SettingsSlots[d] = 0;
                 ImageSlots[d].color = new Color(0, 0, 0, 0f);
+                UpplySlots(d);
+                if(d < 7)
+                    UpplyQuickAccess(d);
 
                 if(Closet != null && CurrentSlot != -1)
                     Closet.Slots[CurrentSlot] = 0;
