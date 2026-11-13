@@ -5,7 +5,7 @@ public class LocationToRevive : MonoBehaviour
     public Vector3 TransportLocation;
     private bool InTrigger;
     public Transform TransformEmpty;
-    public CharacterController CharacterController;
+    public PlayerController PlayerController;
     public bool IsABase;
     public string BaseName;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -22,7 +22,7 @@ public class LocationToRevive : MonoBehaviour
 
             if(IsABase)
             {
-                CharacterController.RevivePosition = TransformEmpty.position;
+                PlayerController.RevivePosition = TransformEmpty.position;
             }
         }
     }
@@ -38,12 +38,12 @@ public class LocationToRevive : MonoBehaviour
     private void OnDestroy()
     {
         TransportLocation = new Vector3(0, 0, 0);
-        CharacterController.RevivePosition = TransportLocation;
+        PlayerController.RevivePosition = TransportLocation;
     }
 
     public void InOut()
     {
-        CharacterController.RevivePosition = TransformEmpty.position;
+        PlayerController.RevivePosition = TransformEmpty.position;
         Debug.Log("Сохранение позиции для возрождения!");
     }
 }

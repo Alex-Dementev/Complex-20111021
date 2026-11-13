@@ -5,7 +5,7 @@ using System.Collections;
 
 public class PauseController : MonoBehaviour
 {
-    private InputAction PauseAction;
+    private InputAction EscAction;
     public Animator PauseAnimator;
     public static bool IsActive = false;
     private float IsDelay;
@@ -27,8 +27,20 @@ public class PauseController : MonoBehaviour
     {
         IsDelay -= Time.unscaledDeltaTime;
 
-        if (PauseAction.triggered)
+        if (EscAction.triggered)
         {
+            if(Crafts.Instance.IsActive)
+            {
+                Crafts.Instance.Activate();
+                return;
+            }
+            if(InventoryPanel.Instance.IsActive)
+            {
+                InventoryPanel.Instance.CloseEsc();
+                return;
+            }
+
+
             if(IsDelay <= 0)
             {
                 if(IsActive)
@@ -37,27 +49,19 @@ public class PauseController : MonoBehaviour
                     InvisibleOperations = false;
                     PauseAnimator.Play("Close");
                     AudioManager.Instance.PauseContinue(true);
-
-                    if(!InventoryPanel.Instance.IsActive)
-                    {
-                        Speed = 1;
-                        Cursor.lockState = CursorLockMode.Locked;
-                        Cursor.visible = false;
-                    }
+                    Speed = 1;
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
                 }
                 else if((DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) <= 1)
                 {
-
-
                     PauseObject.SetActive(true);
                     IsActive = true;
                     PauseAnimator.Play("Open");
                     SaveButton.interactable = false;
                     IdentificatorSave.color = Color.red;
                     AudioManager.Instance.PauseContinue(false);
-
                     Speed = 0;
-
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
                 }
@@ -100,9 +104,9 @@ public class PauseController : MonoBehaviour
 
         var playerMap = inputActions.FindActionMap("Player");
 
-        PauseAction = playerMap.FindAction("Pause");
+        EscAction = playerMap.FindAction("Esc");
 
-        PauseAction.Enable();
+        EscAction.Enable();
 
         MouseSensitivity = PlayerPrefs.GetFloat("Sensitivity", 3);
         OldMouseSentensivity = MouseSensitivity;
@@ -116,7 +120,7 @@ public class PauseController : MonoBehaviour
             PauseAnimator.Play("Close");
             AudioManager.Instance.PauseContinue(false);
 
-            if(!InventoryPanel.Instance.IsActive)
+            if(!InventoryPanel.Instance.IsActive && !Crafts.Instance.IsActive)
                 Speed = 1;
                 
             IsActive = false;

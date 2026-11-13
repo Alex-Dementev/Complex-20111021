@@ -21,7 +21,7 @@ public class BuildManager : MonoBehaviour
 
     public static BuildManager Instance;
 
-    private bool ControlEnbaled = true;
+    public bool ControlEnbaled = true;
 
 
     void Start()

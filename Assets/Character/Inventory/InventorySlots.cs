@@ -35,6 +35,7 @@ public class InventorySlots : MonoBehaviour
     public int SpawnedID;
     public GameObject ChangeButteryObject;
     public Image ChangeButteryImage;
+    public GameObject DropButton;
 
     private int OldIndexBackpack = 0;
 
@@ -135,8 +136,8 @@ public class InventorySlots : MonoBehaviour
 
     void Update()
     {
-        if(ThrowOutAction.triggered)
-            ThrowOut(false);
+        if(ThrowOutAction.triggered && Time.timeScale <= 0.5f)
+            ThrowOut(true);
 
 
         if(OldIndexBackpack != IndexSlots[52])
@@ -309,6 +310,14 @@ public class InventorySlots : MonoBehaviour
             ChangeButtery = false;
             ChangeButteryImage.color = new Color(73f/255f, 73f/255f, 73f/255f);
 
+            for(int i = 0; i < 52; i++)
+            {
+                if(IndexSlots[i] >= AllID.Backpack && IndexSlots[i] < AllID.Butteries)
+                    SlotsAllocations[i].color = new Color(55f/255f, 55f/255f, 55f/255f);
+                else if(IndexSlots[i] == 0)
+                    SlotsAllocations[i].color = new Color(55f/255f, 55f/255f, 55f/255f);
+            }
+
             if(ButteryIDSlots[PreviousSlot] == 0 && Index >= 0 && IndexSlots[Index] >= AllID.Backpack && IndexSlots[Index] < AllID.Butteries)
             {
                 ButteryIDSlots[PreviousSlot] = IndexSlots[Index];
@@ -413,6 +422,8 @@ public class InventorySlots : MonoBehaviour
             ButteryIDSlots[PreviousSlot] = ButteryIDSlots[Index];
             ButteryIDSlots[Index] = tempButteryID;
 
+            DropButton.SetActive(false);
+
             SlotsAllocations[CurrentSlot].color = new Color(55f / 255f, 55f / 255f, 55f / 255f);
             SlotsAllocations[Index].color = new Color(55f / 255f, 55f / 255f, 55f / 255f);
 
@@ -439,19 +450,21 @@ public class InventorySlots : MonoBehaviour
         {
             Description.text = "";
             Name.text = "";
+            DropButton.SetActive(false);
 
             if(Index != CurrentSlot && Index >= 0)
             {
                 SlotsAllocations[Index].color = new Color(85f/255f, 85f/255f, 85f/255f);
+                
+                if(IndexSlots[Index] != 0)
+                    DropButton.SetActive(true);
 
                 if(AllID.Settings[ButteryIDSlots[Index]] != 0)
                     Description.text = AllID.Descriptions[IndexSlots[Index]] + ".\n" + AllID.SettingsStrings[ButteryIDSlots[Index]] + ": " + (int)SettingsSlots[Index] + "/" + AllID.Settings[ButteryIDSlots[Index]];
-                else if(AllID.Settings[IndexSlots[Index]] != 0 && AllID.Settings[IndexSlots[Index]] >= 13)
+                else if(AllID.Settings[IndexSlots[Index]] >= 13)
                     Description.text = AllID.Descriptions[IndexSlots[Index]] + ".\n" + AllID.SettingsStrings[IndexSlots[Index]] + ": " + (int)SettingsSlots[Index] + "/" + AllID.Settings[IndexSlots[Index]];
                 else if(AllID.Settings[IndexSlots[Index]] > 0f)
-                {
                     Description.text = AllID.Descriptions[IndexSlots[Index]] + ".\n" + AllID.SettingsStrings[IndexSlots[Index]] + ": " + SettingsSlots[Index];
-                }
                 else
                     Description.text = AllID.Descriptions[IndexSlots[Index]];
 
@@ -478,9 +491,40 @@ public class InventorySlots : MonoBehaviour
         ChangeButtery = !ChangeButtery;
 
         if(ChangeButtery)
+        {
             ChangeButteryImage.color = new Color(9f/255f, 77f/255f, 0f/255f);
+
+            if(ButteryIDSlots[CurrentSlot] == 0)
+            {
+                for(int i = 0; i < 52; i++)
+                {
+                    if(IndexSlots[i] >= AllID.Backpack && IndexSlots[i] < AllID.Butteries)
+                        SlotsAllocations[i].color = new Color(74f/255f, 87f/255f, 59f/255f);
+                }
+            }
+            else
+            {
+                for(int i = 0; i < 52; i++)
+                {
+                    if(IndexSlots[i] >= AllID.Backpack && IndexSlots[i] < AllID.Butteries)
+                        SlotsAllocations[i].color = new Color(74f/255f, 87f/255f, 59f/255f);
+                    else if(IndexSlots[i] == 0)
+                        SlotsAllocations[i].color = new Color(82f/255f, 104f/255f, 80f/255f);
+                }
+            }
+        }
         else
-            ChangeButteryImage.color = new Color(73f/255f, 73f/255f, 73f/255f);
+        {
+            ChangeButteryImage.color = new Color(72f/255f, 72f/255f, 72f/255f);
+
+            for(int i = 0; i < 52; i++)
+            {
+                if(IndexSlots[i] >= AllID.Backpack && IndexSlots[i] < AllID.Butteries)
+                    SlotsAllocations[i].color = new Color(55f/255f, 55f/255f, 55f/255f);
+                else if(IndexSlots[i] == 0)
+                    SlotsAllocations[i].color = new Color(55f/255f, 55f/255f, 55f/255f);
+            }
+        }
     }
 
     private void UnSelect()
@@ -498,6 +542,8 @@ public class InventorySlots : MonoBehaviour
             SlotsAllocations[PreviousSlot].color = new Color(55f / 255f, 55f / 255f, 55f / 255f);
             PreviousSlot = -1;
         }
+
+        DropButton.SetActive(false);
 
         Description.text = "";
         Name.text = "";
@@ -520,7 +566,7 @@ public class InventorySlots : MonoBehaviour
             {
                 if(IndexSlots[Index] != 0)
                 {
-                    if(IndexSlots[Index] < AllID.Ballons || IndexSlots[Index] > AllID.Backpack)
+                    if(IndexSlots[Index] < AllID.Ballons || IndexSlots[Index] >= AllID.Backpack)
                     {
                         UnSelect();
 
@@ -529,7 +575,7 @@ public class InventorySlots : MonoBehaviour
                 }
                 else if(IndexSlots[PreviousSlot] != 0)
                 {
-                    if(IndexSlots[PreviousSlot] < AllID.Ballons || IndexSlots[PreviousSlot] > AllID.Backpack)
+                    if(IndexSlots[PreviousSlot] < AllID.Ballons || IndexSlots[PreviousSlot] >= AllID.Backpack)
                     {
                         UnSelect();
 
@@ -544,7 +590,7 @@ public class InventorySlots : MonoBehaviour
             {
                 if(IndexSlots[Index] != 0)
                 {
-                    if(IndexSlots[Index] < AllID.Items || IndexSlots[Index] > AllID.Ballons)
+                    if(IndexSlots[Index] < AllID.Items || IndexSlots[Index] >= AllID.Ballons)
                     {
                         UnSelect();
                         
@@ -553,7 +599,7 @@ public class InventorySlots : MonoBehaviour
                 }
                 else if(IndexSlots[PreviousSlot] != 0)
                 {
-                    if(IndexSlots[PreviousSlot] < AllID.Items || IndexSlots[PreviousSlot] > AllID.Ballons)
+                    if(IndexSlots[PreviousSlot] < AllID.Items || IndexSlots[PreviousSlot] >= AllID.Ballons)
                     {
                         UnSelect();
                         

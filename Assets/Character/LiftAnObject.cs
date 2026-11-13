@@ -75,7 +75,7 @@ public class LiftAnObject : MonoBehaviour
 
         RaycastHit hit;
 
-        if (Physics.CapsuleCast(point1, point2, radius, direction, out hit, distance))
+        if (Physics.CapsuleCast(point1, point2, radius, direction, out hit, distance, ~LayerMask.GetMask("Player")))
         {
             IInteractable = hit.collider.GetComponent<IInteractable>();
 

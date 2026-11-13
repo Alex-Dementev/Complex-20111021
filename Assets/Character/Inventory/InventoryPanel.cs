@@ -10,7 +10,7 @@ public class InventoryPanel : MonoBehaviour
     public GameObject InventoryObject;
     public Animator InventoryAnimator;
     [HideInInspector]public bool IsActive;
-    private float IsDelay;
+    public float IsDelay;
     private float Speed;
     public GameObject Closet;
     public InventorySlots InventorySlots;
@@ -37,7 +37,7 @@ public class InventoryPanel : MonoBehaviour
 
         if(InventoryAction.triggered && IsDelay <= 0)
         {
-            if(IsActive && !PauseController.IsActive)
+            if(IsActive && !PauseController.IsActive && !Crafts.Instance.IsActive)
             {
                 IsActive = false;
 
@@ -55,10 +55,8 @@ public class InventoryPanel : MonoBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
-            else if(!IsActive && Time.timeScale != 0 && (DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) <= 1)
+            else if(!IsActive && Time.timeScale != 0 && (DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) <= 1 && !PauseController.IsActive && !Crafts.Instance.IsActive)
             {
-
-
                 Closet.SetActive(false);
                 IsActive = true;
                 InventoryObject.SetActive(true);
@@ -68,9 +66,35 @@ public class InventoryPanel : MonoBehaviour
 
                 PauseController.Speed = 0;
             }
+            else if(Crafts.Instance.IsActive && !IsActive && !PauseController.IsActive)
+                Crafts.Instance.Activate();
 
             IsDelay = 0.5f;
         }
+    }
+
+    public void CloseEsc()
+    {
+        if(IsDelay >= 0)
+            return;
+
+
+        IsActive = false;
+
+        if(Closet.activeSelf)
+            InventoryAnimator.Play("CloseCloset");
+        else
+            InventoryAnimator.Play("Close");
+
+        InventorySlots.Closet = null;
+        InventorySlots.UpdateCloset();
+        InventorySlots.ChangeButtery = false;
+        InventorySlots.ChangeButteryImage.color = new Color(73f/255f, 73f/255f, 73f/255f);
+
+        PauseController.Speed = 1;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        IsDelay = 0.5f;
     }
 
     public void OpenCloset()

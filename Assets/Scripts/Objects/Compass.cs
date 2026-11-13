@@ -9,7 +9,7 @@ public class Compass : MonoBehaviour
     void Update()
     {
         if (!isDropped)
-            targetY = CharacterController.PlayerTransform.eulerAngles.y;
+            targetY = PlayerController.PlayerTransform.eulerAngles.y;
         else
             targetY = transform.eulerAngles.y;
 

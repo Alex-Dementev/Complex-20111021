@@ -43,7 +43,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Pause",
+                    "name": "Esc",
                     "type": "Button",
                     "id": "3d8a6ee9-00c0-4397-abd5-2d060ce3d79c",
                     "expectedControlType": "",
@@ -292,7 +292,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Pause",
+                    "action": "Esc",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

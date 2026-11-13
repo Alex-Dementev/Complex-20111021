@@ -133,6 +133,7 @@ public class BackGroundObjects : MonoBehaviour, IInteractable
 
         CenterSpawnedObjects.Instance.ResourcesPositions[ID + CenterSpawnedObjects.IDSpawnedObjects] = new Vector3(0, 0, 0);
         CenterSpawnedObjects.Instance.ResourcesRotations[ID + CenterSpawnedObjects.IDSpawnedObjects] = new Vector3(0, 0, 0);
+        CenterSpawnedObjects.Instance.ResourcesItems[ID] = null;
         CenterSpawnedObjects.Instance.ResourcesTypes[ID + CenterSpawnedObjects.IDSpawnedObjects] = 0;
 
         Destroy(gameObject);

@@ -158,6 +158,14 @@ public class Spawn : MonoBehaviour
                 ChargeButteriesBase.ID = ObjectID;
                 return;
             }
+            case 5:
+            {
+                var Workbench = obj.GetComponent<Workbench>();
+
+                Workbench.Spawned = true;
+                Workbench.ID = ObjectID;
+                return;
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ public class HandItemSpawner : MonoBehaviour
         if(InventorySlots.Instance.IndexSlots[0] != OldIndex)
         {
             OldIndex = InventorySlots.Instance.IndexSlots[0];
-            ChangeAnimator.CrossFade("Change", 0.05f);
+            ChangeAnimator.CrossFade("Change", 0.05f, 0, 0f);
         }
 
         if(ChooseAction.triggered)
@@ -71,7 +71,7 @@ public class HandItemSpawner : MonoBehaviour
 
     public void VoidChooseAction()
     {
-        if(ThrowOut)
+        if(ThrowOut && Time.timeScale >= 0.9f)
         {
             ActiveItem = false;
             Slot.color = new Color(55f/255f, 55f/255f, 55f/255f);

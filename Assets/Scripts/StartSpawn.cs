@@ -91,6 +91,14 @@ public class StartSpawn : MonoBehaviour
                         ChargeButteriesBase.ID = i - CenterSpawnedObjects.IDSpawnedObjects;
                         break;
                     }
+                    case 5:
+                    {
+                        Workbench Workbench = Instantiate(AllID.BuildPrefab[CenterSpawnedObjects.Instance.ResourcesTypes[i]], CenterSpawnedObjects.Instance.ResourcesPositions[i], Quaternion.Euler(CenterSpawnedObjects.Instance.ResourcesRotations[i])).GetComponent<Workbench>();
+
+                        Workbench.Spawned = true;
+                        Workbench.ID = i - CenterSpawnedObjects.IDSpawnedObjects;
+                        break;
+                    }
                 }
             }
         }

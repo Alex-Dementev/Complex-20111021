@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Revive : MonoBehaviour
 {
-    public CharacterController CharacterController;
+    public PlayerController PlayerController;
     public SystemsController SystemsController;
     public InventorySlots InventorySlots;
 
@@ -10,7 +10,7 @@ public class Revive : MonoBehaviour
     public void RevivePlayer()
     {
         SystemsController.Revive();
-        CharacterController.Revive();
+        PlayerController.Revive();
     }
     
     public void OnDeath()

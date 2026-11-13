@@ -44,7 +44,7 @@ public class Paw : MonoBehaviour
         {
             RaycastHit h;
 
-            if(!Physics.Raycast(StartRaycastPosition, -BodyAnchor.up, out h, 8f, ~PlayerMask))
+            if(!Physics.Raycast(StartRaycastPosition, -Vector3.up, out h, 8f, ~PlayerMask))
             {
                 Vector3 endPoint = StartRaycastPosition + (-BodyAnchor.up * 8f);
                 Debug.DrawLine(StartRaycastPosition, endPoint, Color.red, 3f);
@@ -75,18 +75,12 @@ public class Paw : MonoBehaviour
 
                 if(Physics.Raycast(predictRaycastPosition, -Vector3.up, out h2, 8f, ~PlayerMask))
                 {
-                    if(h2.point.x == 0 || h2.point.z == 0)
+                    if(h2.point.x != 0 || h2.point.z != 0)
                     {
-                        endPosition = h.point + new Vector3(PredictionPlace.x, Luft, PredictionPlace.z);
-                        endRotation = Quaternion.FromToRotation(BodyAnchor.up, h.normal) * BodyAnchor.rotation;
-                    }
-                    else
-                    {
-                        endPosition = h2.point + new Vector3(PredictionPlace.x, Luft, PredictionPlace.z);
+                        endPosition = h2.point + new Vector3(0, Luft, 0);
                         endRotation = Quaternion.FromToRotation(BodyAnchor.up, h2.normal) * BodyAnchor.rotation;
                     }
-
-                    Debug.Log(Index + ": " + endPosition);
+                    else return;
                 }
                 else
                 {
@@ -108,7 +102,7 @@ public class Paw : MonoBehaviour
                         }
                     }
                     
-                    if(Physics.Raycast(StartRaycastPosition, Vector3.down, out h2, 8f, ~PlayerMask))
+                    if(Physics.Raycast(StartRaycastPosition, -Vector3.up, out h2, 8f, ~PlayerMask))
                     {
                         endPosition = h2.point + new Vector3(0, Luft, 0);
                         endRotation = Quaternion.FromToRotation(BodyAnchor.up, h2.normal) * BodyAnchor.rotation;
