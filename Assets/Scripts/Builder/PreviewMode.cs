@@ -35,7 +35,7 @@ public class PreviewMode : MonoBehaviour
         scrollMouseAction.Enable();
     }
 
-    private void OnEnable() {DestroyPreviewModels.Destroy += VoidDestroy;}
+    private void Awake() {DestroyPreviewModels.Destroy += VoidDestroy;}
 
     private void VoidDestroy(bool Build)
     {
@@ -48,7 +48,7 @@ public class PreviewMode : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnDisable(){DestroyPreviewModels.Destroy -= VoidDestroy;}
+    private void OnDestroy(){DestroyPreviewModels.Destroy -= VoidDestroy;}
 
     private void FixedUpdate()
     {

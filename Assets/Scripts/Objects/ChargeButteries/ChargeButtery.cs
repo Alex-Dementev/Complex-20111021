@@ -25,7 +25,7 @@ public class ChargeButtery : MonoBehaviour, IInteractable
 
     public bool GetDestroyBuild()
     {
-        return false;
+        return true;
     }
 
     public bool GetLCM()

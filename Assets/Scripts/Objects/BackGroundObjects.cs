@@ -67,6 +67,9 @@ public class BackGroundObjects : MonoBehaviour, IInteractable
 
     public void RightClick()
     {
+        if((DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) >= 2)
+            return;
+
         if(!DestroyBuild)
             return;
         
@@ -78,12 +81,6 @@ public class BackGroundObjects : MonoBehaviour, IInteractable
 
         if(boolDestroy || Time.timeScale != 1 || !Load)
             return;
-
-        if(DestroyPreviewModels.Destroy != null)
-        {
-            if(DestroyPreviewModels.Destroy.GetInvocationList().Length >= 2)
-                return;
-        }
 
 
         boolDestroy = true;

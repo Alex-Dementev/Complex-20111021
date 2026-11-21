@@ -164,7 +164,7 @@ public class ChoiceOfBuilding : MonoBehaviour
 
     public void Open()
     {
-        if((DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) != 1)
+        if((DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) >= 2)
             return;
 
         Panel.SetActive(true);

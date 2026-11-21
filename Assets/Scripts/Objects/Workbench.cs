@@ -69,6 +69,9 @@ public class Workbench : MonoBehaviour, IInteractable
 
     public void RightClick()
     {
+        if((DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) >= 2)
+            return;
+
         if(InventorySlots.Instance.IndexSlots[0] != 50 || !HandItemSpawner.ActiveItem)
         {
             LiftAnObject.Instance.StartTrableAnimator("Нужен строитель!");
@@ -77,12 +80,6 @@ public class Workbench : MonoBehaviour, IInteractable
 
         if(boolDestroy || Time.timeScale != 1 || !Load)
             return;
-
-        if(DestroyPreviewModels.Destroy != null)
-        {
-            if(DestroyPreviewModels.Destroy.GetInvocationList().Length >= 2)
-                return;
-        }
 
 
         if(Time.timeScale == 0)

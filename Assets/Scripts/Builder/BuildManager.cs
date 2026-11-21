@@ -50,7 +50,7 @@ public class BuildManager : MonoBehaviour
 
             PreviewMode.UpdatePreviewPosition(hit.point, hit.normal);
 
-            if(SpawnAction.triggered)
+            if(SpawnAction.triggered && PreviewMode.isValidPlace)
             {
                 ChoiceOfBuilding.Instance.DestroyBuildLCM();
                 DestroyPreviewModels.Destroy?.Invoke(true);
