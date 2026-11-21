@@ -52,6 +52,7 @@ public class BuildManager : MonoBehaviour
 
             if(SpawnAction.triggered)
             {
+                ChoiceOfBuilding.Instance.DestroyBuildLCM();
                 DestroyPreviewModels.Destroy?.Invoke(true);
                 ControlEnbaled = false;
             }
@@ -68,6 +69,8 @@ public class BuildManager : MonoBehaviour
         Spawn.TransformObject = previewObject.transform;
 
         Spawn.SpawnObject();
+
+        ChoiceOfBuilding.Instance.DestroyBuildLCM();
 
         DestroyPreviewModels.Destroy?.Invoke(false);
 

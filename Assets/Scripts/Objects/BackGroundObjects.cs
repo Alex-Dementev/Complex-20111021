@@ -9,6 +9,7 @@ public class BackGroundObjects : MonoBehaviour, IInteractable
     private bool Load;
     private bool boolDestroy;
     private AllID AllID;
+    public bool DestroyBuild;
 
     private int[] resource1 = new int[2];
     private int[] resource2 = new int[2];
@@ -66,6 +67,9 @@ public class BackGroundObjects : MonoBehaviour, IInteractable
 
     public void RightClick()
     {
+        if(!DestroyBuild)
+            return;
+        
         if(InventorySlots.Instance.IndexSlots[0] != 50 || !HandItemSpawner.ActiveItem)
         {
             LiftAnObject.Instance.StartTrableAnimator("Нужен строитель!");
@@ -142,6 +146,16 @@ public class BackGroundObjects : MonoBehaviour, IInteractable
     public string GetName()
     {
         return "null";
+    }
+
+    public bool GetLCM()
+    {
+        return false;
+    }
+
+    public bool GetDestroyBuild()
+    {
+        return DestroyBuild;
     }
 
     public void LeftClick() {}

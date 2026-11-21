@@ -274,6 +274,11 @@ public class ChargeButteriesBase : MonoBehaviour, IInteractable
         AllID = InventorySlots.Instance.AllID;
     }
 
+    public bool GetDestroyBuild()
+    {
+        return true;
+    }
+
     private void Effect()
     {
         if(ButteryIndex[0] != 0)
@@ -319,5 +324,10 @@ public class ChargeButteriesBase : MonoBehaviour, IInteractable
             ChargeEffect2[1].SetActive(false);
             ChargeEffect2[0].SetActive(false);
         }
+    }
+
+    public bool GetLCM()
+    {
+        return true;
     }
 }

@@ -22,4 +22,14 @@ public class ChargeButtery : MonoBehaviour, IInteractable
     {
         buttery.LeftClickToSlot(ID);
     }
+
+    public bool GetDestroyBuild()
+    {
+        return false;
+    }
+
+    public bool GetLCM()
+    {
+        return true;
+    }
 }

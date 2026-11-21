@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Builder : MonoBehaviour, IBeforeDestroy
+public class Builder : MonoBehaviour
 {
     public Animator Animator;
 
@@ -12,13 +12,13 @@ public class Builder : MonoBehaviour, IBeforeDestroy
         ChoiceOfBuilding.Instance.Open();
     }
 
-    private void OnDisable(){DestroyPreviewModels.Destroy -= VoidSpawn;}
-
-    public void BeforeDestroy()
+    private void OnDisable()
     {
-        DestroyPreviewModels.Destroy -= VoidSpawn;
+        ChoiceOfBuilding.Instance.DestroyBuildLCM();
 
         DestroyPreviewModels.Destroy?.Invoke(false);
+
+        DestroyPreviewModels.Destroy -= VoidSpawn;
 
         ChoiceOfBuilding.Instance.Close();
     }

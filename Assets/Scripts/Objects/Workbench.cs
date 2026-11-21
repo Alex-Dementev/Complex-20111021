@@ -151,6 +151,11 @@ public class Workbench : MonoBehaviour, IInteractable
         return Name;
     }
 
+    public bool GetLCM()
+    {
+        return true;
+    }
+
     public void LeftClick()
     {
         if(boolDestroy || Time.timeScale != 1 || !Load || (DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) >= 2)
@@ -158,6 +163,11 @@ public class Workbench : MonoBehaviour, IInteractable
 
         if(!PauseController.IsActive && !InventoryPanel.Instance.IsActive)
             Crafts.Instance.Activate(0);
+    }
+
+    public bool GetDestroyBuild()
+    {
+        return true;
     }
 
     void Start()

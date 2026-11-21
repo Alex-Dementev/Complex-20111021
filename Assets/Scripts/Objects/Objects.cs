@@ -13,6 +13,7 @@ public class Objects : MonoBehaviour, IInteractable
     private Rigidbody rb;
     public float Settings;
     public int ButteryID;
+    public bool LCM = true;
 
 
     void Start()
@@ -134,5 +135,15 @@ public class Objects : MonoBehaviour, IInteractable
             return Name + " (" + (int)Settings + ")";
         else
             return Name + " " + (int)Settings + "/" + AllID.Settings[ID];
+    }
+
+    public bool GetLCM()
+    {
+        return LCM;
+    }
+
+    public bool GetDestroyBuild()
+    {
+        return false;
     }
 }

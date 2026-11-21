@@ -21,6 +21,8 @@ public class LiftAnObject : MonoBehaviour
     private float IsDelayTrableAnimator;
     public Text TrableText;
     private IInteractable IInteractable;
+    public GameObject LCM;
+    public Animator DestroyBuildAnimator;
 
 
     private void Awake()
@@ -86,6 +88,8 @@ public class LiftAnObject : MonoBehaviour
                     if(AnimatorController)
                     {
                         AnimatorController = false;
+                        LCM.SetActive(IInteractable.GetLCM());
+                        DestroyBuildAnimator.SetBool("Destroy", IInteractable.GetDestroyBuild());
                         AnimatorNameObject.CrossFade("End", 0.2f);
                         return;
                     }
@@ -95,6 +99,8 @@ public class LiftAnObject : MonoBehaviour
                 else
                 {
                     NameObject.text = IInteractable.GetName();
+                    DestroyBuildAnimator.SetBool("Destroy", IInteractable.GetDestroyBuild());
+                    LCM.SetActive(IInteractable.GetLCM());
                 }
 
                 if(!AnimatorController)
@@ -106,6 +112,7 @@ public class LiftAnObject : MonoBehaviour
             else
             {
                 IInteractable = null;
+                DestroyBuildAnimator.SetBool("Destroy", false);
 
                 if(AnimatorController)
                 {

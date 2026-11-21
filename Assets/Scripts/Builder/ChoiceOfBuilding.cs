@@ -37,6 +37,7 @@ public class ChoiceOfBuilding : MonoBehaviour
     private int[] resource4 = new int[2];
     private bool ResourcesZero;
     private int BuilderID = -1;
+    public Animator AnimatorBuildLCM;
 
 
     void Start()
@@ -52,6 +53,11 @@ public class ChoiceOfBuilding : MonoBehaviour
         EscapePreviewModeAction.Enable();
     }
 
+    public void DestroyBuildLCM()
+    {
+        AnimatorBuildLCM.SetBool("Build", false);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -61,6 +67,8 @@ public class ChoiceOfBuilding : MonoBehaviour
 
         if(EscapePreviewModeAction.triggered && InventorySlots.Instance.IndexSlots[0] == BuilderID)
         {
+            DestroyBuildLCM();
+
             DestroyPreviewModels.Destroy?.Invoke(false);
 
             Open();
@@ -123,6 +131,8 @@ public class ChoiceOfBuilding : MonoBehaviour
 
             Debug.Log("Ресурсы есть!");
 
+            AnimatorBuildLCM.SetBool("Build", true);
+
             var obj = Instantiate(AllID.PreviewPrefab[Current], Vector3.zero, Quaternion.identity);
             BuildManager.PreviewMode = obj.GetComponent<PreviewMode>();
             BuildManager.previewObject = obj.transform;
@@ -154,7 +164,7 @@ public class ChoiceOfBuilding : MonoBehaviour
 
     public void Open()
     {
-        if(DestroyPreviewModels.Destroy.GetInvocationList().Length != 1)
+        if((DestroyPreviewModels.Destroy?.GetInvocationList().Length ?? 0) != 1)
             return;
 
         Panel.SetActive(true);
@@ -325,8 +335,6 @@ public class ChoiceOfBuilding : MonoBehaviour
     {
         if(CurrentPanel == 0 || CurrentPanel >= 6) return;
 
-        Debug.Log(CurrentPanel - 1);
-        
         Panels[CurrentPanel - 1].SetActive(true);
         Names[CurrentPanel - 1].text = AllID.BuildName[i];
         Images[CurrentPanel - 1].sprite = AllID.BuildSprite[i];

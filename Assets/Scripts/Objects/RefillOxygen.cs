@@ -266,4 +266,14 @@ public class RefillOxygen : MonoBehaviour, IInteractable
             RefillEffect[2].SetActive(true);
         }
     }
+
+    public bool GetDestroyBuild()
+    {
+        return true;
+    }
+
+    public bool GetLCM()
+    {
+        return true;
+    }
 }

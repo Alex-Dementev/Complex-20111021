@@ -246,4 +246,14 @@ public class Closet : MonoBehaviour, IInteractable
     {
         AllID = InventorySlots.Instance.AllID;
     }
+
+    public bool GetLCM()
+    {
+        return true;
+    }
+
+    public bool GetDestroyBuild()
+    {
+        return true;
+    }
 }

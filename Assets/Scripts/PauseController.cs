@@ -20,7 +20,6 @@ public class PauseController : MonoBehaviour
     public static bool InvisibleOperations;
     public Button SaveButton;
     private float OldMouseSentensivity;
-    public Animator ControlAnimator;
 
 
     void Update()
@@ -92,12 +91,7 @@ public class PauseController : MonoBehaviour
             }
         }
     }
-
-    public void VoidControl()
-    {
-        ControlAnimator.CrossFade("Open", 0.2f);
-    }
-
+    
     void Start()
     {
         Speed = 1;

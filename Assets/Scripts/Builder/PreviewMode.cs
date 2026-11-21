@@ -110,7 +110,7 @@ public class PreviewMode : MonoBehaviour
 
         Gizmos.color = isValidPlace ? Color.green : Color.red;
 
-        Vector3 center = transform.position + transform.up * (checkBoxSize.y * 0.02f);
+        Vector3 center = transform.position + transform.up * checkBoxSize.y * 0.02f;
 
         Gizmos.matrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
         Gizmos.DrawWireCube(Vector3.zero, checkBoxSize);

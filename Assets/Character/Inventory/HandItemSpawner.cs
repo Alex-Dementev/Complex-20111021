@@ -15,7 +15,6 @@ public class HandItemSpawner : MonoBehaviour
     private InputAction ThrowOutAction;
     public Animator ChangeAnimator;
     private bool ThrowOut;
-    private IBeforeDestroy IBeforeDestroy;
 
 
     void Start()
@@ -113,8 +112,6 @@ public class HandItemSpawner : MonoBehaviour
         Object = Instantiate(AllID.HandPrefab[OldIndex]);
 
         Object.transform.SetParent(HandPoint, false);
-
-        IBeforeDestroy = Object.GetComponent<IBeforeDestroy>();
     }
 
     private void DestroyObject()
@@ -122,8 +119,6 @@ public class HandItemSpawner : MonoBehaviour
         if(Object == null)
             return;
 
-        if(IBeforeDestroy != null)
-            IBeforeDestroy.BeforeDestroy();
         Destroy(Object);
     }
 }
